@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+  <head> </head>
+  <body>
+    <div id="root"></div>
+
+    <script>
+      const heading = document.createElement('h1')
+      heading.textContent = 'Day 2'
+      const subHeading = document.createElement('p')
+      subHeading.textContent = 'This is DOM Manipulation'
+      const pickText = document.createElement('p')
+      pickText.textContent = 'Iam Beautiful'
+
+      const button = document.createElement('button')
+      button.textContent = ' Click Me'
+
+      function apaYa() {
+        const pickText = document.createElement('p')
+        pickText.textContent = 'Iam Beautiful'
+        rootElement.appendChild(pickText)
+      }
+
+      const rootElement = document.getElementById('root')
+      rootElement.appendChild(heading)
+      rootElement.appendChild(subHeading)
+      rootElement.appendChild(button)
+      button.addEventListener('click', () =>
+        button.addEventListener('click', apaYa())
+      )
+    </script>
+  </body>
+</html>
