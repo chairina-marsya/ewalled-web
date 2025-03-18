@@ -1,0 +1,9 @@
+#root {
+  width: -webkit-fill-available;
+  height: 100vh;
+  color: black;
+
+  font-family: "Open Sans", sans-serif;
+  background-color: #FAFBFD;
+  margin: 0;
+}
