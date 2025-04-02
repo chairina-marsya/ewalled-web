@@ -1,9 +1,449 @@
 #root {
   width: -webkit-fill-available;
-  height: 100vh;
+  height: auto;
+  background-color: #FAFBFD;
   color: black;
-
   font-family: "Open Sans", sans-serif;
   background-color: #FAFBFD;
+  margin: 0 auto;
+}
+
+body {
   margin: 0;
+}
+
+p {
+  margin: 5px;
+}
+
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: #f4f4f4;
+}
+
+.login-form {
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.login-form h2 {
+  margin-bottom: 1rem;
+}
+
+.login-form input {
+  width: -webkit-fill-available;
+  padding: 0.75rem;
+  margin: 0.5rem 0;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.login-form button {
+  width: 100%;
+  padding: 0.75rem;
+  border: none;
+  background: #007bff;
+  color: white;
+  font-size: 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.login-form button:hover {
+  background: #0056b3;
+}
+
+
+nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #FFFFFF;
+  padding: 15px 40px;
+  height: 3vh;
+
+  position: sticky;
+  /* Tetap di atas saat scroll */
+  top: 0;
+  z-index: 1000;
+  /* Pastikan navbar tetap di atas elemen lain */
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.nav-link {
+  padding: 5px 9px;
+  text-decoration: none;
+  color: inherit;
+}
+
+.nav-link:hover {
+  color: blue;
+  font-weight: bold;
+}
+
+.vl {
+  border-left: 1px solid #B3B3B3;
+  margin-left: 10px;
+  height: 20px;
+}
+
+.container-a {
+  padding: 15px 40px;
+}
+
+.greeting {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.greeting-title {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.greeting-subtitle {
+  font-size: 16px;
+}
+
+.profile-section {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.profile-photo {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 5px solid #0061ff;
+  border-radius: 50%;
+  height: 50px;
+  width: 50px;
+  overflow: hidden;
+}
+
+.profile-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.profile-name {
+  text-align: end;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.profile-type {
+  text-align: end;
+  font-size: 12px;
+}
+
+.amount {
+  display: flex;
+  justify-content: space-between;
+}
+
+.act_num {
+  border-radius: 25px;
+  padding: 30px 20px;
+}
+
+.account-info {
+  background-color: #0061ff;
+  width: 20%;
+  color: white;
+}
+
+.account-balance {
+  width: 70%;
+  background-color: white;
+}
+
+.amount-num {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.profile-balance {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.profile-amount {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.account-actions {
+  display: flex;
+  gap: 15px;
+}
+
+.account_icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #0061FF;
+  padding: 8px;
+  border-radius: 10px;
+  box-shadow: 0px 0px 10px 0px #19918F;
+}
+
+/* Container utama */
+.container-table {
+  background: #ffffff;
+  padding: 1.5rem;
+  border-radius: 10px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  font-size: 0.8rem;
+  margin-top: 1rem;
+  font-family: "Montserrat", sans-serif;
+}
+
+/* Kontrol pencarian dan dropdown */
+.controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+/* Kotak pencarian */
+.search-box {
+  display: flex;
+  align-items: center;
+  border: 1px solid #ddd;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  box-shadow: 0px 0px 10px 0px rgba(91, 91, 91, 0.1);
+}
+
+.search-input {
+  border: none;
+  outline: none;
+  margin-left: 0.5rem;
+  font-size: 1rem;
+  flex: 1;
+  background-color: transparent;
+}
+
+.search-icon {
+  color: #555;
+}
+
+/* Dropdown styling */
+.dropdown {
+  padding: 0.5rem 1rem;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  box-shadow: 0px 0px 10px 0px rgba(91, 91, 91, 0.1);
+  background-color: transparent;
+}
+
+/* Table styling */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid #EDEDED;
+}
+
+.table th,
+.table td {
+  padding: 1rem;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+  border: 1px solid #EDEDED
+}
+
+.table th {
+  /* background: #f5f5f5; */
+  font-weight: bold;
+}
+
+tbody tr:nth-child(odd) {
+  background: #F6F6F6;
+}
+
+.amount-positive {
+  color: green;
+}
+
+.amount-negative {
+  color: red;
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  /* justify-content: center; */
+  /* gap: 8px; */
+  margin-top: 16px;
+  /* padding: 8px; */
+  border-radius: 8px;
+  border: 1.35px solid #BDBDBD;
+  width: fit-content;
+}
+
+.pagination-button {
+  padding: 8px 12px;
+  border: none;
+  background-color: white;
+  color: #007bff;
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+.pagination-button:hover {
+  background-color: #e0e0e0;
+}
+
+.pagination-button:disabled {
+  color: #b0b0b0;
+  cursor: not-allowed;
+}
+
+.pagination-button.active {
+  background-color: #007bff;
+  color: white;
+  border-radius: 6px;
+}
+
+h2 {
+  text-align: left;
+  margin-bottom: 1rem;
+}
+
+.transfer-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  height: 90vh;
+  background-color: #f6f6f6;
+  padding: 2vw;
+}
+
+.transfer-card {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 0.75rem;
+  box-shadow: 0 0.25rem 0.625rem rgba(0, 0, 0, 0.1);
+  width: 90%;
+  max-width: 25rem;
+  text-align: left;
+}
+
+.transfer-card h2 {
+  margin-bottom: 1rem;
+}
+
+.input-group {
+  background: #f0f0f0;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.label {
+  font-weight: bold;
+  color: #333;
+  font-size: 1rem;
+}
+
+.receiver {
+  flex: 1;
+  margin-left: 0.625rem;
+  color: #000;
+  font-size: 1rem;
+}
+
+.arrow {
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.amount-container {
+  background: #fafafa;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.notes-input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-size: 1rem;
+  margin-top: 0.25rem;
+}
+
+.transfer-btn {
+  width: 100%;
+  padding: 0.875rem;
+  background: #007bff;
+  color: white;
+  font-size: 1.125rem;
+  font-weight: bold;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  border: none;
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+
+.transfer-btn:hover {
+  background: #0056b3;
+  box-shadow: 0 0.25rem 0.75rem rgba(0, 91, 187, 0.4);
+}
+
+.select-input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  background: white;
+  cursor: pointer;
+}
+
+.select-input:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+@media (max-width: 768px) {
+  .transfer-card {
+    max-width: 80%;
+  }
+}
+
+@media (max-width: 480px) {
+  .transfer-card {
+    max-width: 95%;
+    padding: 1.25rem;
+  }
 }
