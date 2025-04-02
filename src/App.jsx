@@ -1,64 +1,38 @@
 import { useState } from 'react'
 import './App.css'
-import { Route, Routes, Navigate } from 'react-router-dom'
-import HomePage from './pages/Home'
-import LoginPage from './pages/Login'
-import NoFoundPage from './pages/NotFound'
-import TransferPage from './pages/Transfer'
-import TopUpPage from './pages/TopUp'
+import { Route, Routes, Navigate, useLocation } from 'react-router-dom'
+import HomePage from './pages/HomePage'
+import LoginPage from './pages/LoginPage'
+import NoFoundPage from './pages/NotFoundPage'
+import TransferPage from './pages/TransferPage'
+import TopUpPage from './pages/TopUpPage'
+import RegisterPage from './pages/RegisterPage'
+import Navbar from './components/organisms/Navbar'
 
 function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const location = useLocation() // Get the current path
+
+  const handleLogout = () => {
+    // Handle logout logic, e.g., clear localStorage or set state
+    localStorage.setItem('isAuthenticated', 'false')
+    window.location.href = '/login' // Redirect to login page after logout
+  }
 
   return (
     <div>
-      {/* Navbar hanya muncul jika user sudah login */}
-      {isAuthenticated && (
-        <nav className='nav'>
-          <img height='25' src='/asset/walled.png' alt='Logo' />
-          <div className='nav-links'>
-            <a href='/' className='nav-link'>
-              Dashboard
-            </a>
-            <a href='/transfer' className='nav-link'>
-              Transfer
-            </a>
-            <a href='/top-up' className='nav-link'>
-              Top Up
-            </a>
-            <a
-              href='/login'
-              className='nav-link'
-              onClick={() => setIsAuthenticated(false)}
-            >
-              Sign Out
-            </a>
-            <img height='20' src='/asset/mode.png' alt='Mode Icon' />
-          </div>
-        </nav>
+      {/* Conditionally render the Navbar */}
+      {!['/login', '/register', '/nofound'].includes(location.pathname) && (
+        <Navbar onLogout={handleLogout} />
       )}
 
       <Routes>
-        {/* Redirect ke dashboard jika sudah login */}
-        <Route
-          path='/'
-          element={isAuthenticated ? <HomePage /> : <Navigate to='/login' />}
-        />
-        <Route
-          path='/login'
-          element={<LoginPage setIsAuthenticated={setIsAuthenticated} />}
-        />
-        <Route
-          path='/transfer'
-          element={
-            isAuthenticated ? <TransferPage /> : <Navigate to='/login' />
-          }
-        />
-        <Route
-          path='/top-up'
-          element={isAuthenticated ? <TopUpPage /> : <Navigate to='/login' />}
-        />
-        <Route path='*' element={<NoFoundPage />} />
+        {/* Redirect to dashboard if logged in */}
+        <Route path='/' element={<HomePage />} />
+        <Route path='/login' element={<LoginPage />} />
+        <Route path='/register' element={<RegisterPage />} />
+        <Route path='/nofound' element={<NoFoundPage />} />
+        <Route path='/transfer' element={<TransferPage />} />
+        <Route path='/top-up' element={<TopUpPage />} />
       </Routes>
     </div>
   )
