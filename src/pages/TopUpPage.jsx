@@ -14,30 +14,28 @@ const TopUpPage = () => {
   }
 
   return (
-    <div className='min-h-screen'>
+    <div className='min-h-screen  bg-[#f9f9f9] text-black dark:bg-black dark:text-white'>
       {/* mobile */}
       <div className='block lg:hidden'>
-        <div className='min-h-screen bg-[#f6f6f6] px-4 py-6 lg:py-10 flex flex-col items-center'>
+        <div className='min-h-screen px-4 py-6 lg:py-10 flex flex-col items-center bg-[#f9f9f9] text-black dark:bg-black dark:text-white'>
           <div className='w-full max-w-md'>
             {/* Header */}
-            <h2 className='text-lg font-bold text-black mb-4 lg:hidden'>
-              Top Up
-            </h2>
+            <h2 className='text-lg font-bold mb-4 lg:hidden'>Top Up</h2>
 
             {/* Amount */}
-            <div className='bg-[#f9f9f9] rounded-md p-4 mb-4'>
+            <div className='rounded-md p-4 mb-4 bg-white dark:bg-[#272727] dark:text-white'>
               <label className='text-gray-400 text-sm'>Amount</label>
               <div className='flex items-end gap-2 mt-1'>
                 <span className='text-sm font-semibold'>IDR</span>
-                <p className='text-2xl font-semibold text-black'>100.000</p>
+                <p className='text-2xl font-semibold'>100.000</p>
               </div>
             </div>
 
             {/* Sender Selector */}
-            <div className='bg-[#f9f9f9] text-white px-4 py-3 rounded-md flex justify-between items-center mb-4'>
+            <div className='px-4 py-3 rounded-md flex justify-between items-center mb-4  bg-white dark:bg-[#272727] dark:text-white'>
               {/* <label className='text-gray-400 font-semibold mr-2'>From:</label> */}
               <select
-                className='bg-transparent text-black flex-1 focus:outline-none appearance-none pr-6'
+                className='bg-transparent flex-1 focus:outline-none appearance-none pr-6'
                 value={selectedReceiver}
                 onChange={handleSelectChange}
               >
@@ -69,11 +67,11 @@ const TopUpPage = () => {
             </div>
 
             {/* Notes */}
-            <div className='bg-[#f9f9f9] rounded-md p-4 mb-6'>
-              <label className='text-gray-400 text-sm mb-1 block'>Notes</label>
+            <div className='bg-[#f9f9f9] rounded-md p-4 mb-6 bg-white dark:bg-[#272727] dark:text-white'>
+              <label className='text-400 text-sm mb-1 block'>Notes</label>
               <input
                 type='text'
-                className='w-full bg-transparent border-b border-gray-300 focus:outline-none text-sm text-black'
+                className='w-full bg-transparent border-b border-gray-300 focus:outline-none text-sm dark:text-white'
                 placeholder='Write a note...'
               />
             </div>
@@ -87,28 +85,28 @@ const TopUpPage = () => {
       </div>
       {/* desktop */}
       <div className='hidden lg:block'>
-        <div className='flex flex-col justify-center items-center min-h-[90vh] bg-[#f6f6f6] px-4'>
+        <div className='flex flex-col justify-center items-center min-h-[90vh] px-4'>
           <div className='w-full max-w-md p-6'>
             <h2 className='text-lg font-bold mb-4 ml-2'>Top Up</h2>
-            <div className='bg-white w-full max-w-md p-6 rounded-2xl shadow text-left'>
+            <div className='w-full max-w-md p-6 rounded-2xl shadow text-left dark:bg-[#272727] dark:text-white'>
               {/* Amount Section */}
-              <div className='bg-gray-100 p-4 rounded-xl mb-2'>
-                <span className='text-sm font-semibold text-gray-700'>
+              <div className='bg-gray-100 p-4 rounded-xl mb-2 dark:bg-black dark:text-white'>
+                <span className='text-sm font-semibold text-gray-700 dark:text-white'>
                   Amount
                 </span>
-                <p className='text-2xl font-bold text-gray-900 mt-1'>
+                <p className='text-2xl font-bold text-gray-900 mt-1 dark:text-white'>
                   IDR 150.000,00
                 </p>
                 <hr className='border-black mt-2' />
               </div>
 
               {/* Dropdown Select */}
-              <div className='flex items-center justify-between bg-gray-100 rounded-[10px] shadow-sm mb-4'>
-                <span className='bg-gray-300 px-4 py-3 rounded-[20px] font-bold text-sm'>
+              <div className='flex items-center justify-between bg-gray-100 rounded-[10px] shadow-sm mb-4 dark:bg-black dark:text-white'>
+                <span className='bg-gray-300 px-4 py-3 rounded-[20px] font-bold text-sm dark:text-white'>
                   From
                 </span>
                 <select
-                  className='bg-transparent text-sm text-gray-800 focus:outline-none flex-1 ml-3 mr-3'
+                  className='bg-transparent text-sm text-gray-800 focus:outline-none flex-1 ml-3 mr-3 dark:text-white'
                   value={selectedReceiver}
                   onChange={handleSelectChange}
                 >
@@ -121,14 +119,14 @@ const TopUpPage = () => {
               </div>
 
               {/* Notes Input */}
-              <div className='bg-gray-100 p-3 rounded-xl mb-6'>
-                <label className='text-sm font-semibold text-gray-700 mb-1 block'>
+              <div className='bg-gray-100 p-3 rounded-xl mb-6 dark:bg-black dark:text-white'>
+                <label className='text-sm font-semibold text-gray-700 mb-1 block dark:text-white'>
                   Notes:
                 </label>
                 <input
                   type='text'
                   placeholder='Write a note...'
-                  className='w-full bg-transparent focus:outline-none text-sm'
+                  className='w-full bg-transparent focus:outline-none text-smdark:text-white'
                 />
               </div>
 

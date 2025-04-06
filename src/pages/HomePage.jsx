@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { ChevronLeft, ChevronRight, Search } from 'lucide-react'
+import { useTheme } from '../context/ThemeContext'
 
 const isPositive = (amount) => amount > 0
 
@@ -26,6 +27,7 @@ const HomePage = () => {
   const [order, setOrder] = useState('desc')
   const [page, setPage] = useState(1)
   const [itemsPerPage, setItemsPerPage] = useState(5)
+  const { isDark } = useTheme()
 
   const filteredTransactions = transactions
     .filter((t) => t.description.toLowerCase().includes(search.toLowerCase()))
@@ -42,7 +44,7 @@ const HomePage = () => {
   )
 
   return (
-    <div className='min-h-screen'>
+    <div className='min-h-screen bg-[#f9f9f9] text-black dark:bg-black dark:text-white'>
       {/* Mobile Version */}
       <div className='block lg:hidden'>
         {/* insert the mobile JSX here based on your mockup */}
@@ -51,30 +53,34 @@ const HomePage = () => {
           <div className='flex items-center justify-between mb-4'></div>
 
           {/* Greeting Section */}
-          <div className='flex mb-5'>
+          <div className='flex justify-between mb-5'>
             <div>
               <p className='text-lg font-bold'>Good Morning, Chelsea</p>
               <p className='text-sm text-gray-600'>
                 Check all your incoming and outgoing transactions here
               </p>
             </div>
-            <img src='/asset/sunface.png' alt='sunface' className='w-20 mt-2' />
+            <img
+              src={isDark ? '/asset/moonface.png' : '/asset/sunface.png'}
+              alt='modeface'
+              className='w-20 mt-2'
+            />
           </div>
 
           {/* Account No */}
-          <div className='bg-blue-600 text-white px-4 py-4 rounded-xl mb-4 flex justify-between'>
+          <div className='bg-blue-600 px-4 py-4 rounded-xl mb-4 flex justify-between bg-[#f9f9f9] text-black dark:bg-[#272727] dark:text-white'>
             <p className='text-md'>Account No.</p>
             <p className='text-md'>100899</p>
           </div>
 
           {/* Balance Card */}
-          <div className='flex justify-between items-center relative bg-white px-4 py-4 rounded-xl mb-4 shadow'>
+          <div className='flex justify-between items-center relative bg-white px-4 py-4 rounded-xl mb-4 shadow bg-[#f9f9f9] text-black dark:bg-[#272727] dark:text-white'>
             <div>
-              <p className='text-sm text-gray-500'>Balance</p>
+              <p className='text-sm'>Balance</p>
               <div className='flex items-center'>
                 <p className='text-xl font-bold w-50'>Rp 10.000.000</p>
                 <img
-                  height='20'
+                  height='15'
                   src='/asset/visibility.png'
                   alt='Visibility'
                   className='w-5 h-5 cursor-pointer'
@@ -103,16 +109,15 @@ const HomePage = () => {
           </div>
 
           {/* Transaction History */}
-          <div className='bg-white p-4 mt-8 rounded-xl shadow-md'>
+          <div className='p-4 mt-8 rounded-xl shadow-md bg-[#f9f9f9] text-black dark:bg-[#272727] dark:text-white'>
             <p className='font-semibold text-base mb-4'>Transaction History</p>
+            <hr className='border-t border-gray-300 dark:border-white my-4' />
             <div className='space-y-4'>
               {transactions.map((t, index) => (
                 <div key={index} className='flex items-start gap-3'>
                   <div className='w-8 h-8 rounded-full bg-gray-300'></div>
                   <div className='flex-1'>
-                    <p className='text-sm font-medium'>
-                      {t.from || 'Unknown Sender'}
-                    </p>
+                    <p className='text-sm font-medium'>{t.from || ''}</p>
                     <p className='text-sm text-gray-500'>{t.type}</p>
                     <p className='text-xs text-gray-400'>{t.date}</p>
                   </div>
@@ -156,17 +161,17 @@ const HomePage = () => {
             </div>
           </div>
 
-          <div className='flex flex-col lg:flex-row gap-4'>
+          <div className='flex justify-between flex-col lg:flex-row gap-4'>
             <div className='bg-blue-600 text-white p-4 lg:p-8 rounded-xl w-full lg:w-1/5'>
               <p className='text-sm'>Account No.</p>
               <p className='text-2xl font-bold'>100899</p>
             </div>
-            <div className='bg-white w-3/4 p-8 rounded-xl'>
+            <div className='bg-white w-3/4 p-8 rounded-xl bg-[#f9f9f9] text-black dark:bg-[#272727] dark:text-white'>
               <p className='text-sm'>Balance</p>
               <div className='flex justify-between items-center'>
                 <p className='text-2xl font-bold'>Rp 10.000.000,00</p>
                 <img
-                  height='20'
+                  height='15'
                   src='/asset/visibility.png'
                   alt='Visibility'
                   className='cursor-pointer'
@@ -193,19 +198,18 @@ const HomePage = () => {
             </div>
           </div>
 
-          <div className='bg-white p-6 mt-6 rounded-lg shadow-lg'>
+          <div className='bg-white p-6 mt-6 rounded-lg shadow-lg  bg-[#f9f9f9] text-black dark:bg-[#272727] dark:text-white'>
             <div className='flex justify-between mb-6'>
               <div
                 className='flex items-center border p-2 rounded-lg shadow-sm'
                 style={{
-                  backgroundColor: '#FFFFFF',
                   border: '1px solid #FFFFFF',
                   boxShadow: '0px 0px 10px 0px #5B5B5B1A',
                 }}
               >
                 <Search className='mr-2' size={18} />
                 <input
-                  className='outline-none border-none bg-transparent'
+                  className='outline-none border-none bg-transparent text-black dark:bg-[#272727] dark:text-white'
                   placeholder='Search'
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
@@ -217,7 +221,6 @@ const HomePage = () => {
                   <select
                     className='p-2 border rounded-md shadow-sm text-sm'
                     style={{
-                      backgroundColor: '#FFFFFF',
                       border: '1px solid #FFFFFF',
                       boxShadow: '0px 0px 10px 0px #5B5B5B1A',
                     }}
@@ -233,7 +236,6 @@ const HomePage = () => {
                   <select
                     className='p-2 border rounded-md shadow-sm text-sm'
                     style={{
-                      backgroundColor: '#FFFFFF',
                       border: '1px solid #FFFFFF',
                       boxShadow: '0px 0px 10px 0px #5B5B5B1A',
                     }}
@@ -245,7 +247,6 @@ const HomePage = () => {
                   <select
                     className='p-2 border rounded-md shadow-sm text-sm'
                     style={{
-                      backgroundColor: '#FFFFFF',
                       border: '1px solid #FFFFFF',
                       boxShadow: '0px 0px 10px 0px #5B5B5B1A',
                     }}
@@ -273,7 +274,7 @@ const HomePage = () => {
                 {paginatedTransactions.map((t, index) => (
                   <tr
                     key={index}
-                    className={index % 2 === 0 ? 'bg-white' : 'bg-none'}
+                    className={index % 2 === 0 ? 'dark:text-black' : 'unset'}
                   >
                     <td className='px-4 py-2'>{t.date}</td>
                     <td className='px-4 py-2'>{t.type}</td>

@@ -16,28 +16,34 @@ const RegisterPage = ({ setIsAuthenticated }) => {
   useEffect(() => {
     const registerUser = async () => {
       try {
-        const response = await axios.post('http://localhost:8080/api/auth/register', {
-          email: "john.doe@mail.com",
-          username: "johndoemail",
-          fullname: "John Doe Mail",
-          password: "password123",
-          phoneNumber: "12313123"
-        }, {
-          headers: {
-            'Content-Type': 'application/json'
+        const response = await axios.post(
+          'http://localhost:8080/api/auth/register',
+          {
+            email: 'john.doe@mail.com',
+            username: 'johndoemail',
+            fullname: 'John Doe Mail',
+            password: 'password123',
+            phoneNumber: '12313123',
+          },
+          {
+            headers: {
+              'Content-Type': 'application/json',
+            },
           }
-        });
-    
-        console.log('Registration Successful:', response.data);
+        )
+
+        console.log('Registration Successful:', response.data)
       } catch (error) {
-        console.error('Registration Failed:', error.response ? error.response.data : error.message);
+        console.error(
+          'Registration Failed:',
+          error.response ? error.response.data : error.message
+        )
       }
-    };
-    
+    }
+
     // Call the function
-    registerUser();
+    registerUser()
   }, [])
-  
 
   const handleLogin = (e) => {
     e.preventDefault()
@@ -53,7 +59,7 @@ const RegisterPage = ({ setIsAuthenticated }) => {
   return (
     <div className='min-h-screen flex'>
       {/* Left Section - Login Form */}
-      <div className='w-full md:w-1/2 flex items-center justify-center p-6 bg-white'>
+      <div className='w-full md:w-1/2 flex items-center justify-center p-6 bg-white dark:bg-black dark:text-white'>
         <RegisterBox
           email={email}
           password={password}

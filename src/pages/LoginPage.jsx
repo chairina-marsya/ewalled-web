@@ -52,7 +52,7 @@ const LoginPage = () => {
   return (
     <div className='min-h-screen flex'>
       {/* Left Section - Login Form */}
-      <div className='w-full md:w-1/2 flex items-center justify-center p-6 bg-white'>
+      <div className='w-full md:w-1/2 flex items-center justify-center p-6 bg-white dark:bg-black dark:text-white'>
         <LoginBox
           email={email}
           password={password}

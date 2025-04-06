@@ -1,11 +1,13 @@
 import { useState } from 'react'
 import { Menu, X } from 'lucide-react'
+import { useTheme } from '../../context/ThemeContext'
 
 const Navbar = ({ onLogout }) => {
+  const { toggleTheme, isDark } = useTheme()
   const [menuOpen, setMenuOpen] = useState(false)
 
   return (
-    <nav className='sticky top-0 z-50 bg-white px-6 py-3 h-[8vh] flex justify-between items-center shadow-sm'>
+    <nav className='sticky top-0 z-50 px-6 py-3 h-[8vh] flex justify-between items-center shadow-sm bg-white text-black dark:bg-[#272727] dark:text-white'>
       {/* Mobile: Avatar + Name */}
       <div className='flex items-center gap-3 lg:hidden'>
         <img
@@ -20,7 +22,11 @@ const Navbar = ({ onLogout }) => {
       </div>
 
       {/* Desktop: Logo */}
-      <img src='/asset/walled.png' alt='Logo' className='hidden lg:block h-6' />
+      <img
+        src={isDark ? '/asset/walledwhite.svg' : '/asset/walled.svg'}
+        alt='Logo'
+        className='hidden lg:block h-8'
+      />
 
       {/* Desktop nav links */}
       <div className='hidden lg:flex items-center gap-6'>
@@ -37,12 +43,24 @@ const Navbar = ({ onLogout }) => {
           Sign Out
         </a>
         <p>|</p>
-        <img src='/asset/mode.png' alt='Mode' className='h-5' />
+        <div onClick={toggleTheme}>
+          <img
+            src={isDark ? '/asset/mode.png' : '/asset/moon.png'}
+            alt='Mode'
+            className='h-5'
+          />
+        </div>
       </div>
 
       {/* Mobile: Mode + Hamburger */}
       <div className='flex lg:hidden items-center gap-4'>
-        <img src='/asset/mode.png' alt='Mode Icon' className='h-5' />
+        <div onClick={toggleTheme}>
+          <img
+            src={isDark ? '/asset/mode.png' : '/asset/moon.png'}
+            alt='Mode'
+            className='h-5'
+          />
+        </div>
         <button
           onClick={() => setMenuOpen(!menuOpen)}
           className='focus:outline-none'
@@ -53,7 +71,7 @@ const Navbar = ({ onLogout }) => {
 
       {/* Mobile dropdown menu */}
       {menuOpen && (
-        <div className='absolute top-[8vh] left-0 w-full bg-white shadow-md px-6 py-4 flex flex-col gap-4 lg:hidden z-40'>
+        <div className='absolute top-[8vh] left-0 w-full shadow-md px-6 py-4 flex flex-col gap-4 lg:hidden z-40 bg-white text-black dark:bg-[#272727] dark:text-white'>
           <a href='/' className='nav-link'>
             Dashboard
           </a>
