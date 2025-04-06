@@ -1,6 +1,7 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import LoginBox from '../components/organisms/LoginBox'
+import axios from 'axios'
 
 const LoginPage = () => {
   // Accept setIsAuthenticated as a prop
@@ -8,6 +9,35 @@ const LoginPage = () => {
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const navigate = useNavigate()
+
+  useEffect(() => {
+    const loginUser = async () => {
+      try {
+        const response = await axios.post(
+          'http://localhost:8080/api/auth/login',
+          {
+            email: 'john.doe@mail.com',
+            password: 'password123',
+          },
+          {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          }
+        )
+
+        console.log('Login Successful:', response.data)
+      } catch (error) {
+        console.error(
+          'Login Failed:',
+          error.response ? error.response.data : error.message
+        )
+      }
+    }
+
+    // Call the function
+    loginUser()
+  }, [])
 
   const handleLogin = (e) => {
     e.preventDefault()

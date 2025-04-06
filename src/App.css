@@ -15,7 +15,7 @@ body {
 }
 
 p {
-  margin: 5px;
+  /* margin: 5px; */
 }
 
 nav {
@@ -25,12 +25,9 @@ nav {
   background-color: #FFFFFF;
   padding: 15px 40px;
   height: 8vh;
-
   position: sticky;
-  /* Tetap di atas saat scroll */
   top: 0;
   z-index: 1000;
-  /* Pastikan navbar tetap di atas elemen lain */
 }
 
 .nav-links {
@@ -48,172 +45,6 @@ nav {
 .nav-link:hover {
   color: blue;
   font-weight: bold;
-}
-
-.vl {
-  border-left: 1px solid #B3B3B3;
-  margin-left: 10px;
-  height: 20px;
-}
-
-.container-a {
-  padding: 15px 40px;
-}
-
-.greeting {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-.greeting-title {
-  font-size: 24px;
-  font-weight: bold;
-}
-
-.greeting-subtitle {
-  font-size: 16px;
-}
-
-.profile-section {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-}
-
-.profile-photo {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border: 5px solid #0061ff;
-  border-radius: 50%;
-  height: 50px;
-  width: 50px;
-  overflow: hidden;
-}
-
-.profile-photo img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.profile-name {
-  text-align: end;
-  font-size: 12px;
-  font-weight: bold;
-}
-
-.profile-type {
-  text-align: end;
-  font-size: 12px;
-}
-
-.amount {
-  display: flex;
-  justify-content: space-between;
-}
-
-.act_num {
-  border-radius: 25px;
-  padding: 30px 20px;
-}
-
-.account-info {
-  background-color: #0061ff;
-  width: 20%;
-  color: white;
-}
-
-.account-balance {
-  width: 70%;
-  background-color: white;
-}
-
-.amount-num {
-  font-size: 20px;
-  font-weight: bold;
-}
-
-.profile-balance {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.profile-amount {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.account-actions {
-  display: flex;
-  gap: 15px;
-}
-
-.account_icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #0061FF;
-  padding: 8px;
-  border-radius: 10px;
-  box-shadow: 0px 0px 10px 0px #19918F;
-}
-
-/* Container utama */
-.container-table {
-  background: #ffffff;
-  padding: 1.5rem;
-  border-radius: 10px;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-  font-size: 0.8rem;
-  margin-top: 1rem;
-  font-family: "Montserrat", sans-serif;
-}
-
-/* Kontrol pencarian dan dropdown */
-.controls {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1.5rem;
-}
-
-/* Kotak pencarian */
-.search-box {
-  display: flex;
-  align-items: center;
-  border: 1px solid #ddd;
-  padding: 0.5rem 1rem;
-  border-radius: 5px;
-  box-shadow: 0px 0px 10px 0px rgba(91, 91, 91, 0.1);
-}
-
-.search-input {
-  border: none;
-  outline: none;
-  margin-left: 0.5rem;
-  font-size: 1rem;
-  flex: 1;
-  background-color: transparent;
-}
-
-.search-icon {
-  color: #555;
-}
-
-/* Dropdown styling */
-.dropdown {
-  padding: 0.5rem 1rem;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  font-size: 0.8rem;
-  cursor: pointer;
-  box-shadow: 0px 0px 10px 0px rgba(91, 91, 91, 0.1);
-  background-color: transparent;
 }
 
 /* Table styling */
@@ -397,11 +228,19 @@ h2 {
   .transfer-card {
     max-width: 80%;
   }
+
+  nav {
+    padding: 15px;
+  }
 }
 
 @media (max-width: 480px) {
   .transfer-card {
     max-width: 95%;
     padding: 1.25rem;
+  }
+
+  nav {
+    padding: 15px;
   }
 }

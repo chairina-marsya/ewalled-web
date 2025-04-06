@@ -1,4 +1,5 @@
-import React, { useState } from 'react'
+import axios from 'axios'
+import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import LoginBox from '../components/organisms/LoginBox'
 import RegisterBox from '../components/organisms/RegisterBox'
@@ -11,6 +12,32 @@ const RegisterPage = ({ setIsAuthenticated }) => {
   const [phone, setPhone] = useState(null)
   const [error, setError] = useState('')
   const navigate = useNavigate()
+
+  useEffect(() => {
+    const registerUser = async () => {
+      try {
+        const response = await axios.post('http://localhost:8080/api/auth/register', {
+          email: "john.doe@mail.com",
+          username: "johndoemail",
+          fullname: "John Doe Mail",
+          password: "password123",
+          phoneNumber: "12313123"
+        }, {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+    
+        console.log('Registration Successful:', response.data);
+      } catch (error) {
+        console.error('Registration Failed:', error.response ? error.response.data : error.message);
+      }
+    };
+    
+    // Call the function
+    registerUser();
+  }, [])
+  
 
   const handleLogin = (e) => {
     e.preventDefault()
