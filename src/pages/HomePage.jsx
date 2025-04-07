@@ -217,7 +217,7 @@ const HomePage = () => {
                   src='/asset/addicon.png'
                   alt='Add'
                   className='object-cover'
-                  onClick={() => navigate('/topup')}
+                  onClick={() => navigate('/top-up')}
                 />
               </div>
               <div className='cursor-pointer bg-[#0061FF] shadow-[0px_0px_10px_0px_#19918F] p-2 rounded-md inline-flex items-center justify-center w-10 h-10'>
@@ -314,7 +314,7 @@ const HomePage = () => {
                       src='/asset/addicon.png'
                       alt='Add'
                       className='object-cover'
-                      onClick={() => navigate('/topup')}
+                      onClick={() => navigate('/top-up')}
                     />
                   </div>
                   <div className='cursor-pointer bg-[#0061FF] shadow-[0px_0px_10px_0px_#19918F] p-2 rounded-md inline-flex items-center justify-center w-10 h-10'>
