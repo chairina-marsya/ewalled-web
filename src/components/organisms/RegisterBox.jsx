@@ -8,6 +8,8 @@ const RegisterBox = ({
   password,
   phone,
   fullName,
+  avatarUrl,
+  onAvatarUrl,
   onNameChange,
   onPhoneChange,
   onEmailChange,
@@ -31,6 +33,8 @@ const RegisterBox = ({
         password={password}
         phone={phone}
         fullName={fullName}
+        avatarUrl={avatarUrl}
+        onAvatarUrl={onAvatarUrl}
         onNameChange={onNameChange}
         onPhoneChange={onPhoneChange}
         onEmailChange={onEmailChange}

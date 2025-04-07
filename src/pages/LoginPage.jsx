@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import LoginBox from '../components/organisms/LoginBox'
 import axios from 'axios'
+import { showAlert } from '../components/organisms/ShowAlert'
 
 const LoginPage = () => {
   // Accept setIsAuthenticated as a prop
@@ -10,14 +11,16 @@ const LoginPage = () => {
   const [error, setError] = useState('')
   const navigate = useNavigate()
 
-  useEffect(() => {
+  const handleLogin = (e) => {
+    e.preventDefault()
+
     const loginUser = async () => {
       try {
         const response = await axios.post(
           'http://localhost:8080/api/auth/login',
           {
-            email: 'john.doe@mail.com',
-            password: 'password123',
+            email: email,
+            password: password,
           },
           {
             headers: {
@@ -26,27 +29,20 @@ const LoginPage = () => {
           }
         )
 
-        console.log('Login Successful:', response.data)
+        localStorage.setItem('token', response.data.token)
+        showAlert(`Selamat datang ${email}!`, 'OK', handleConfirm)
+        setError(null)
       } catch (error) {
-        console.error(
-          'Login Failed:',
-          error.response ? error.response.data : error.message
-        )
+        setError(error.message)
       }
     }
 
     // Call the function
     loginUser()
-  }, [])
+  }
 
-  const handleLogin = (e) => {
-    e.preventDefault()
-
-    if (email === 'admin' && password === 'admin') {
-      navigate('/') // Redirect to homepage (Dashboard) after successful login
-    } else {
-      setError('Username atau password salah') // Show error if login fails
-    }
+  const handleConfirm = () => {
+    navigate('/')
   }
 
   return (

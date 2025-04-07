@@ -8,13 +8,14 @@ import TransferPage from './pages/TransferPage'
 import TopUpPage from './pages/TopUpPage'
 import RegisterPage from './pages/RegisterPage'
 import Navbar from './components/organisms/Navbar'
+import TransactionSuccessCard from './pages/TransactionSuccessPage'
 
 function App() {
   const location = useLocation() // Get the current path
 
   const handleLogout = () => {
     // Handle logout logic, e.g., clear localStorage or set state
-    localStorage.setItem('isAuthenticated', 'false')
+    localStorage.clear()
     window.location.href = '/login' // Redirect to login page after logout
   }
 
@@ -33,6 +34,10 @@ function App() {
         <Route path='/nofound' element={<NoFoundPage />} />
         <Route path='/transfer' element={<TransferPage />} />
         <Route path='/top-up' element={<TopUpPage />} />
+        <Route
+          path='/transaction-success'
+          element={<TransactionSuccessCard />}
+        />
       </Routes>
     </div>
   )

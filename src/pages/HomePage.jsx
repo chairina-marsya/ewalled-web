@@ -1,6 +1,11 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { ChevronLeft, ChevronRight, Search } from 'lucide-react'
 import { useTheme } from '../context/ThemeContext'
+import { useNavigate } from 'react-router-dom'
+import { showAlert } from '../components/organisms/ShowAlert'
+import axios from 'axios'
+import { useUserStore } from '../../store/userStore'
+import { useWalletStore } from '../../store/walletStore'
 
 const isPositive = (amount) => amount > 0
 
@@ -22,12 +27,118 @@ const transactions = [
 ]
 
 const HomePage = () => {
+  const { isDark } = useTheme()
+  const navigate = useNavigate()
   const [search, setSearch] = useState('')
   const [sortBy, setSortBy] = useState('date')
   const [order, setOrder] = useState('desc')
   const [page, setPage] = useState(1)
   const [itemsPerPage, setItemsPerPage] = useState(5)
-  const { isDark } = useTheme()
+  const [greeting, setGreeting] = useState('Morning')
+  const [isVisible, setIsVisible] = useState(false)
+  const { user, setUser } = useUserStore()
+  const { wallet, setWallet } = useWalletStore()
+
+  let token = null
+
+  useEffect(() => {
+    token = localStorage.getItem('token')
+    if (!token || token === null || token === undefined) {
+      showAlert(
+        `Sesi anda habis. Silahkan login kembali.`,
+        'OK',
+        handleConfirmLogout
+      )
+    } else {
+      setGreeting(getTimeGreeting())
+
+      const fetchUserData = async () => {
+        try {
+          const responseUser = await axios.get(
+            'http://localhost:8080/api/users/me',
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          )
+
+          const dataUser = responseUser.data.data
+          setUser(dataUser)
+
+          try {
+            const responseWalletByUser = await axios.get(
+              `http://localhost:8080/api/wallets/user/${dataUser.id}`,
+              {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                },
+              }
+            )
+
+            const dataWallet = responseWalletByUser.data
+            if (dataWallet && !dataWallet.length > 0) {
+              try {
+                const responseCreateWallet = await axios.post(
+                  'http://localhost:8080/api/wallets/1',
+                  {
+                    email: dataUser.email,
+                  },
+                  {
+                    headers: {
+                      'Content-Type': 'application/json',
+                      Authorization: `Bearer ${token}`,
+                    },
+                  }
+                )
+
+                const dataCreateWallet = responseCreateWallet.data
+                setWallet(dataCreateWallet)
+              } catch (error) {
+                console.error('Error fetching wallet:', error)
+                showAlert(`Oop! ${error.message}`, 'OK', handleConfirmLogout)
+              }
+            } else if (dataWallet.length > 0) {
+              setWallet(dataWallet[0])
+            }
+          } catch (error) {
+            console.error('Error fetching user data:', error.message)
+            showAlert(`Oop! ${error.message}`, 'OK', handleConfirmLogout)
+          }
+          console.log(responseUser.data)
+        } catch (error) {
+          console.error('Error fetching user data:', error.message)
+          showAlert(`Oop! ${error.message}`, 'OK', handleConfirmLogout)
+        }
+      }
+
+      fetchUserData()
+    }
+  }, [])
+
+  const getTimeGreeting = () => {
+    const hour = new Date().getHours()
+
+    if (hour >= 5 && hour < 12) {
+      return 'Morning'
+    } else if (hour >= 12 && hour < 17) {
+      return 'Afternoon'
+    } else {
+      return 'Night'
+    }
+  }
+
+  const toRupiah = (number) => {
+    return new Intl.NumberFormat('id-ID', {
+      style: 'currency',
+      currency: 'IDR',
+      minimumFractionDigits: 0,
+    }).format(number)
+  }
+
+  const handleConfirmLogout = () => {
+    navigate('/login')
+  }
 
   const filteredTransactions = transactions
     .filter((t) => t.description.toLowerCase().includes(search.toLowerCase()))
@@ -43,6 +154,8 @@ const HomePage = () => {
     page * itemsPerPage
   )
 
+  if (!user && wallet !== null) return <p>Loading...</p>
+
   return (
     <div className='min-h-screen bg-[#f9f9f9] text-black dark:bg-black dark:text-white'>
       {/* Mobile Version */}
@@ -55,13 +168,19 @@ const HomePage = () => {
           {/* Greeting Section */}
           <div className='flex justify-between mb-5'>
             <div>
-              <p className='text-lg font-bold'>Good Morning, Chelsea</p>
+              <p className='text-lg font-bold'>{`Good ${greeting}, ${
+                user?.fullname?.split(' ')[0] || '-'
+              }`}</p>
               <p className='text-sm text-gray-600'>
                 Check all your incoming and outgoing transactions here
               </p>
             </div>
             <img
-              src={isDark ? '/asset/moonface.png' : '/asset/sunface.png'}
+              src={
+                greeting === 'Night'
+                  ? '/asset/moonface.png'
+                  : '/asset/sunface.png'
+              }
               alt='modeface'
               className='w-20 mt-2'
             />
@@ -70,20 +189,23 @@ const HomePage = () => {
           {/* Account No */}
           <div className='bg-blue-600 px-4 py-4 rounded-xl mb-4 flex justify-between bg-[#f9f9f9] text-black dark:bg-[#272727] dark:text-white'>
             <p className='text-md'>Account No.</p>
-            <p className='text-md'>100899</p>
+            <p className='text-md'>{wallet?.accountNumber || '-'}</p>
           </div>
 
           {/* Balance Card */}
           <div className='flex justify-between items-center relative bg-white px-4 py-4 rounded-xl mb-4 shadow bg-[#f9f9f9] text-black dark:bg-[#272727] dark:text-white'>
             <div>
               <p className='text-sm'>Balance</p>
-              <div className='flex items-center'>
-                <p className='text-xl font-bold w-50'>Rp 10.000.000</p>
+              <div className='flex items-center gap-1'>
+                <p className='text-xl font-bold w-40'>
+                  {isVisible ? toRupiah(wallet?.balance || 0) : 'Rp •••••'}
+                </p>
                 <img
                   height='15'
                   src='/asset/visibility.png'
                   alt='Visibility'
                   className='w-5 h-5 cursor-pointer'
+                  onClick={() => setIsVisible((prev) => !prev)}
                 />
               </div>
             </div>
@@ -95,6 +217,7 @@ const HomePage = () => {
                   src='/asset/addicon.png'
                   alt='Add'
                   className='object-cover'
+                  onClick={() => navigate('/topup')}
                 />
               </div>
               <div className='cursor-pointer bg-[#0061FF] shadow-[0px_0px_10px_0px_#19918F] p-2 rounded-md inline-flex items-center justify-center w-10 h-10'>
@@ -103,6 +226,7 @@ const HomePage = () => {
                   src='/asset/share.png'
                   alt='Share'
                   className='object-cover'
+                  onClick={() => navigate('/transfer')}
                 />
               </div>
             </div>
@@ -141,19 +265,21 @@ const HomePage = () => {
         <div className='px-10 py-4'>
           <div className='flex justify-between items-center mb-5'>
             <div>
-              <p className='text-2xl font-bold'>Good Morning, Chelsea</p>
+              <p className='text-2xl font-bold'>{`Good ${greeting}, ${
+                user?.fullname?.split(' ')[0]
+              }`}</p>
               <p className='text-sm'>
                 Check all your incoming and outgoing transactions here
               </p>
             </div>
             <div className='flex items-center gap-4'>
               <div>
-                <p className='text-end text-sm font-bold'>Chelsea Immanuela</p>
+                <p className='text-end text-sm font-bold'>{user?.fullname}</p>
                 <p className='text-end text-xs'>Personal Account</p>
               </div>
               <div className='w-12 h-12 border-5 border-blue-600 rounded-full overflow-hidden'>
                 <img
-                  src='https://images.unsplash.com/photo-1574169207511-e21a21c8075a?q=80&w=2080&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
+                  src={user?.avatarUrl}
                   alt='Profile'
                   className='object-cover w-full h-full'
                 />
@@ -162,20 +288,25 @@ const HomePage = () => {
           </div>
 
           <div className='flex justify-between flex-col lg:flex-row gap-4'>
-            <div className='bg-blue-600 text-white p-4 lg:p-8 rounded-xl w-full lg:w-1/5'>
+            <div className='bg-blue-600 text-white p-4 lg:p-8 rounded-xl w-full lg:w-1/4'>
               <p className='text-sm'>Account No.</p>
-              <p className='text-2xl font-bold'>100899</p>
+              <p className='text-2xl font-bold'>{wallet?.accountNumber}</p>
             </div>
             <div className='bg-white w-3/4 p-8 rounded-xl bg-[#f9f9f9] text-black dark:bg-[#272727] dark:text-white'>
               <p className='text-sm'>Balance</p>
               <div className='flex justify-between items-center'>
-                <p className='text-2xl font-bold'>Rp 10.000.000,00</p>
-                <img
-                  height='15'
-                  src='/asset/visibility.png'
-                  alt='Visibility'
-                  className='cursor-pointer'
-                />
+                <div className='flex gap-2.5'>
+                  <p className='text-2xl font-bold w-60'>
+                    {isVisible ? toRupiah(wallet?.balance || 0) : 'Rp •••••'}
+                  </p>
+                  <img
+                    height='15'
+                    src='/asset/visibility.png'
+                    alt='Visibility'
+                    className='cursor-pointer'
+                    onClick={() => setIsVisible((prev) => !prev)}
+                  />
+                </div>
                 <div className='flex gap-5'>
                   <div className='cursor-pointer bg-[#0061FF] shadow-[0px_0px_10px_0px_#19918F] p-2 rounded-md inline-flex items-center justify-center w-10 h-10'>
                     <img
@@ -183,6 +314,7 @@ const HomePage = () => {
                       src='/asset/addicon.png'
                       alt='Add'
                       className='object-cover'
+                      onClick={() => navigate('/topup')}
                     />
                   </div>
                   <div className='cursor-pointer bg-[#0061FF] shadow-[0px_0px_10px_0px_#19918F] p-2 rounded-md inline-flex items-center justify-center w-10 h-10'>
@@ -191,6 +323,7 @@ const HomePage = () => {
                       src='/asset/share.png'
                       alt='Share'
                       className='object-cover'
+                      onClick={() => navigate('/transfer')}
                     />
                   </div>
                 </div>

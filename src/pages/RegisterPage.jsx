@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import LoginBox from '../components/organisms/LoginBox'
 import RegisterBox from '../components/organisms/RegisterBox'
+import { showAlert } from '../components/organisms/ShowAlert'
 
 const RegisterPage = ({ setIsAuthenticated }) => {
   // Accept setIsAuthenticated as a prop
@@ -11,19 +12,23 @@ const RegisterPage = ({ setIsAuthenticated }) => {
   const [name, setName] = useState('')
   const [phone, setPhone] = useState(null)
   const [error, setError] = useState('')
+  const [avatarUrl, setAvatarUrl] = useState('')
   const navigate = useNavigate()
 
-  useEffect(() => {
+  const handleLogin = (e) => {
+    e.preventDefault()
+
     const registerUser = async () => {
       try {
         const response = await axios.post(
           'http://localhost:8080/api/auth/register',
           {
-            email: 'john.doe@mail.com',
-            username: 'johndoemail',
-            fullname: 'John Doe Mail',
-            password: 'password123',
-            phoneNumber: '12313123',
+            email: email,
+            username: email,
+            fullname: name,
+            password: password,
+            phoneNumber: phone,
+            avatarUrl: avatarUrl,
           },
           {
             headers: {
@@ -31,29 +36,24 @@ const RegisterPage = ({ setIsAuthenticated }) => {
             },
           }
         )
-
-        console.log('Registration Successful:', response.data)
-      } catch (error) {
-        console.error(
-          'Registration Failed:',
-          error.response ? error.response.data : error.message
+        showAlert(
+          `Selamat! Akun ${response.data.fullname} telah berhasil terdaftar. Silahkan login.`,
+          'OK',
+          handleConfirm
         )
+        setError(null)
+      } catch (error) {
+        const inline = Object.values(error.response.data).join(', ')
+        setError(inline || error.message)
       }
     }
 
     // Call the function
     registerUser()
-  }, [])
+  }
 
-  const handleLogin = (e) => {
-    e.preventDefault()
-
-    if (email === 'admin' && password === 'admin') {
-      setIsAuthenticated(true) // Set the authentication state to true
-      navigate('/') // Redirect to homepage (Dashboard) after successful login
-    } else {
-      setError('Username atau password salah') // Show error if login fails
-    }
+  const handleConfirm = () => {
+    navigate('/login')
   }
 
   return (
@@ -65,6 +65,8 @@ const RegisterPage = ({ setIsAuthenticated }) => {
           password={password}
           phone={phone}
           fullName={name}
+          avatarUrl={avatarUrl}
+          onAvatarUrl={(e) => setAvatarUrl(e.target.value)}
           onNameChange={(e) => setName(e.target.value)}
           onPhoneChange={(e) => setPhone(e.target.value)}
           onEmailChange={(e) => setEmail(e.target.value)}

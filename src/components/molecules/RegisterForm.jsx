@@ -7,6 +7,8 @@ const RegisterForm = ({
   password,
   phone,
   fullName,
+  avatarUrl,
+  onAvatarUrl,
   onNameChange,
   onPhoneChange,
   onEmailChange,
@@ -24,7 +26,7 @@ const RegisterForm = ({
     />
     <Input
       type='text'
-      placeholder='Emal'
+      placeholder='Email'
       value={email}
       onChange={onEmailChange}
     />
@@ -39,6 +41,12 @@ const RegisterForm = ({
       placeholder='No Hp'
       value={phone}
       onChange={onPhoneChange}
+    />
+    <Input
+      type='text'
+      placeholder='Avatar'
+      value={avatarUrl}
+      onChange={onAvatarUrl}
     />
     <Button>Daftar</Button>
   </form>

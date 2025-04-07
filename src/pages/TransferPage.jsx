@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 const dummyReceivers = [
   { id: 1, name: 'Giz', account: '900782139' },
@@ -7,6 +8,7 @@ const dummyReceivers = [
 ]
 
 const TransferPage = () => {
+  const navigate = useNavigate()
   const [selectedReceiver, setSelectedReceiver] = useState(dummyReceivers[0].id)
 
   const handleSelectChange = (event) => {
@@ -59,7 +61,7 @@ const TransferPage = () => {
             </div>
 
             {/* Amount */}
-            <div className='bg-[#f9f9f9] rounded-xl p-4 mb-4 dark:bg-[#272727] dark:text-white'>
+            <div className='rounded-xl p-4 mb-4 bg-[#f9f9f9] dark:bg-[#272727] dark:text-white'>
               <label className='text-gray-400 text-sm'>Amount</label>
               <div className='flex items-end gap-2 mt-1'>
                 <span className='text-sm font-semibold'>IDR</span>
@@ -84,7 +86,10 @@ const TransferPage = () => {
             </div>
 
             {/* Button */}
-            <button className='w-full py-3 bg-[#0057FF] text-white font-semibold rounded-lg shadow-md'>
+            <button
+              className='w-full py-3 bg-[#0057FF] text-white font-semibold rounded-lg shadow-md'
+              onClick={() => navigate('/transaction-success')}
+            >
               Transfer
             </button>
           </div>
@@ -142,7 +147,10 @@ const TransferPage = () => {
               </div>
 
               {/* Button */}
-              <button className='w-full py-3 bg-blue-600 hover:bg-blue-700 text-white text-lg font-semibold rounded-xl shadow-md transition'>
+              <button
+                className='w-full py-3 bg-blue-600 hover:bg-blue-700 text-white text-lg font-semibold rounded-xl shadow-md transition'
+                onClick={() => navigate('/transaction-success')}
+              >
                 Transfer
               </button>
             </div>

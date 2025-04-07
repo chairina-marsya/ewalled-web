@@ -114,130 +114,17 @@ tbody tr:nth-child(odd) {
   border-radius: 6px;
 }
 
-h2 {
-  text-align: left;
-  margin-bottom: 1rem;
+/* index.css or global.css */
+.swal-popup {
+  font-size: 14px;
+  font-family: "Open Sans", sans-serif;
 }
 
-.transfer-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  height: 90vh;
-  background-color: #f6f6f6;
-  padding: 2vw;
-}
-
-.transfer-card {
-  background: white;
-  padding: 1.5rem;
-  border-radius: 0.75rem;
-  box-shadow: 0 0.25rem 0.625rem rgba(0, 0, 0, 0.1);
-  width: 90%;
-  max-width: 25rem;
-  text-align: left;
-}
-
-.transfer-card h2 {
-  margin-bottom: 1rem;
-}
-
-.input-group {
-  background: #f0f0f0;
-  padding: 0.75rem;
-  border-radius: 0.5rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1rem;
-}
-
-.label {
-  font-weight: bold;
-  color: #333;
-  font-size: 1rem;
-}
-
-.receiver {
-  flex: 1;
-  margin-left: 0.625rem;
-  color: #000;
-  font-size: 1rem;
-}
-
-.arrow {
-  font-size: 1rem;
-  cursor: pointer;
-}
-
-.amount-container {
-  background: #fafafa;
-  padding: 0.75rem;
-  border-radius: 0.5rem;
-  margin-bottom: 1rem;
-}
-
-.notes-input {
-  width: 100%;
-  background: transparent;
-  border: none;
-  outline: none;
-  font-size: 1rem;
-  margin-top: 0.25rem;
-}
-
-.transfer-btn {
-  width: 100%;
-  padding: 0.875rem;
-  background: #007bff;
-  color: white;
-  font-size: 1.125rem;
-  font-weight: bold;
-  border-radius: 0.5rem;
-  cursor: pointer;
-  border: none;
-  transition: background 0.3s ease, box-shadow 0.3s ease;
-}
-
-.transfer-btn:hover {
-  background: #0056b3;
-  box-shadow: 0 0.25rem 0.75rem rgba(0, 91, 187, 0.4);
-}
-
-.select-input {
-  width: 100%;
-  padding: 0.75rem;
-  border: 1px solid #ddd;
-  border-radius: 0.5rem;
-  font-size: 1rem;
-  background: white;
-  cursor: pointer;
-}
-
-.select-input:focus {
-  outline: none;
-  border-color: #007bff;
-  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
-}
-
-@media (max-width: 768px) {
-  .transfer-card {
-    max-width: 80%;
-  }
-
-  nav {
-    padding: 15px;
-  }
-}
-
-@media (max-width: 480px) {
-  .transfer-card {
-    max-width: 95%;
-    padding: 1.25rem;
-  }
-
-  nav {
-    padding: 15px;
-  }
+.swal-confirm-btn {
+  background-color: #007bff;
+  color: #fff;
+  padding: 8px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-family: "Open Sans", sans-serif;
 }
