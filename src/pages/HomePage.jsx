@@ -6,34 +6,40 @@ import { showAlert } from '../components/organisms/ShowAlert'
 import axios from 'axios'
 import { useUserStore } from '../../store/userStore'
 import { useWalletStore } from '../../store/walletStore'
+import moment from 'moment'
 
-const isPositive = (amount) => amount > 0
+const isPositive = (type) => type === 'TOP_UP'
 
-const transactions = [
-  {
-    date: '20:10 - 30 June 2022',
-    type: 'Transfer',
-    from: 'Sendy',
-    description: 'Fore Coffee',
-    amount: -75000,
-  },
-  {
-    date: '20:10 - 30 June 2022',
-    type: 'Topup',
-    from: '',
-    description: 'Topup from Bank Transfer',
-    amount: 1000000,
-  },
-]
+// const transactions = [
+//   {
+//     date: '20:10 - 30 June 2022',
+//     type: 'Transfer',
+//     from: 'Sendy',
+//     description: 'Fore Coffee',
+//     amount: -75000,
+//   },
+//   {
+//     date: '20:10 - 30 June 2022',
+//     type: 'Topup',
+//     from: '',
+//     description: 'Topup from Bank Transfer',
+//     amount: 1000000,
+//   },
+// ]
 
 const HomePage = () => {
   const { isDark } = useTheme()
   const navigate = useNavigate()
   const [search, setSearch] = useState('')
-  const [sortBy, setSortBy] = useState('date')
+  const [sortBy, setSortBy] = useState('transactionDate')
   const [order, setOrder] = useState('desc')
+  const [time, setTime] = useState('ALL_TIME')
+  const [type, setType] = useState('TOP_UP')
   const [page, setPage] = useState(1)
+  const [totalPages, setTotalPages] = useState(1)
+  const [paginatedTransactions, setPaginatedTransactions] = useState([])
   const [itemsPerPage, setItemsPerPage] = useState(5)
+  const [transactions, setTransactions] = useState([])
   const [greeting, setGreeting] = useState('Morning')
   const [isVisible, setIsVisible] = useState(false)
   const { user, setUser } = useUserStore()
@@ -80,7 +86,7 @@ const HomePage = () => {
             if (dataWallet && !dataWallet.length > 0) {
               try {
                 const responseCreateWallet = await axios.post(
-                  'http://localhost:8080/api/wallets/1',
+                  `http://localhost:8080/api/wallets/${dataUser.id}`,
                   {
                     email: dataUser.email,
                   },
@@ -94,27 +100,68 @@ const HomePage = () => {
 
                 const dataCreateWallet = responseCreateWallet.data
                 setWallet(dataCreateWallet)
+                getTransactionHistory(dataCreateWallet.id)
               } catch (error) {
                 console.error('Error fetching wallet:', error)
-                showAlert(`Oop! ${error.message}`, 'OK', handleConfirmLogout)
+                showAlert(`Oop! ${error.message}`, 'OK', null)
               }
             } else if (dataWallet.length > 0) {
               setWallet(dataWallet[0])
+              getTransactionHistory(dataWallet[0].id)
             }
           } catch (error) {
             console.error('Error fetching user data:', error.message)
-            showAlert(`Oop! ${error.message}`, 'OK', handleConfirmLogout)
+            showAlert(`Oop! ${error.message}`, 'OK', null)
           }
           console.log(responseUser.data)
         } catch (error) {
           console.error('Error fetching user data:', error.message)
-          showAlert(`Oop! ${error.message}`, 'OK', handleConfirmLogout)
+          showAlert(`Oop! ${error.message}`, 'OK', null)
         }
       }
 
       fetchUserData()
     }
   }, [])
+
+  useEffect(() => {
+    if (wallet) {
+      getTransactionHistory(wallet.id)
+    }
+  }, [sortBy, order, time, type])
+
+  const getTransactionHistory = (id) => {
+    const url = 'http://localhost:8080/api/transactions/filter'
+
+    const params = {
+      walletId: id,
+      type: type,
+      timeRange: time,
+      startDate: getDateRange(time).startDate,
+      endDate: getDateRange(time).endDate,
+      sortBy: sortBy,
+      order: order,
+    }
+
+    const headers = {
+      Authorization: `Bearer ${token}`,
+    }
+
+    axios
+      .get(url, { params, headers })
+      .then((response) => {
+        const dataTransaction = response.data.content
+        setTransactions(dataTransaction)
+        setTotalPages(Math.ceil(dataTransaction.length / itemsPerPage))
+        setPaginatedTransactions(
+          dataTransaction.slice((page - 1) * itemsPerPage, page * itemsPerPage)
+        )
+      })
+      .catch((error) => {
+        console.error('Error:', error)
+        showAlert(`Oop! ${error.message}`, 'OK', null)
+      })
+  }
 
   const getTimeGreeting = () => {
     const hour = new Date().getHours()
@@ -136,23 +183,48 @@ const HomePage = () => {
     }).format(number)
   }
 
+  const getDateRange = (type) => {
+    let startDate, endDate
+
+    switch (type) {
+      case 'ALL_TIME':
+        startDate = moment('2024-12-01T00:00:00')
+        endDate = moment('2025-12-01T00:00:00')
+        break
+
+      case 'TODAY':
+        startDate = moment().startOf('day')
+        endDate = moment().endOf('day')
+        break
+
+      case 'YESTERDAY':
+        startDate = moment().subtract(1, 'day').startOf('day')
+        endDate = moment().subtract(1, 'day').endOf('day')
+        break
+
+      case 'THIS_WEEK':
+        startDate = moment().startOf('week') // default start is Sunday
+        endDate = moment().endOf('week')
+        break
+
+      case 'THIS_MONTH':
+        startDate = moment().startOf('month')
+        endDate = moment().endOf('month')
+        break
+
+      default:
+        throw new Error(`Unknown date range type: ${type}`)
+    }
+
+    return {
+      startDate: startDate.toISOString(),
+      endDate: endDate.toISOString(),
+    }
+  }
+
   const handleConfirmLogout = () => {
     navigate('/login')
   }
-
-  const filteredTransactions = transactions
-    .filter((t) => t.description.toLowerCase().includes(search.toLowerCase()))
-    .sort((a, b) => {
-      if (sortBy === 'date') return order === 'desc' ? -1 : 1
-      if (sortBy === 'amount')
-        return order === 'desc' ? b.amount - a.amount : a.amount - b.amount
-    })
-
-  const totalPages = Math.ceil(filteredTransactions.length / itemsPerPage)
-  const paginatedTransactions = filteredTransactions.slice(
-    (page - 1) * itemsPerPage,
-    page * itemsPerPage
-  )
 
   if (!user && wallet !== null) return <p>Loading...</p>
 
@@ -202,7 +274,7 @@ const HomePage = () => {
                 </p>
                 <img
                   height='15'
-                  src='/asset/visibility.png'
+                  src={isVisible ? '/asset/visibility.svg' : '/asset/hide.svg'}
                   alt='Visibility'
                   className='w-5 h-5 cursor-pointer'
                   onClick={() => setIsVisible((prev) => !prev)}
@@ -241,17 +313,25 @@ const HomePage = () => {
                 <div key={index} className='flex items-start gap-3'>
                   <div className='w-8 h-8 rounded-full bg-gray-300'></div>
                   <div className='flex-1'>
-                    <p className='text-sm font-medium'>{t.from || ''}</p>
-                    <p className='text-sm text-gray-500'>{t.type}</p>
-                    <p className='text-xs text-gray-400'>{t.date}</p>
+                    <p className='text-sm font-medium'>
+                      {t.option || t.recipientWalletId || ''}
+                    </p>
+                    <p className='text-sm text-gray-500'>
+                      {t.transactionType === 'TOP_UP' ? 'TOP UP' : 'TRANSFER'}
+                    </p>
+                    <p className='text-xs text-gray-400'>
+                      {moment(t.transactionDate).format('HH:mm - D MMMM YYYY')}
+                    </p>
                   </div>
                   <p
                     className={`text-sm font-semibold ${
-                      isPositive(t.amount) ? 'text-green-500' : 'text-red-500'
+                      isPositive(t.transactionType)
+                        ? 'text-green-500'
+                        : 'text-red-500'
                     }`}
                   >
-                    {isPositive(t.amount) ? '+' : '-'}{' '}
-                    {Math.abs(t.amount).toLocaleString('id-ID')}
+                    {isPositive(t.transactionType) ? '+' : '-'}{' '}
+                    {toRupiah(t.amount)}
                   </p>
                 </div>
               ))}
@@ -301,7 +381,9 @@ const HomePage = () => {
                   </p>
                   <img
                     height='15'
-                    src='/asset/visibility.png'
+                    src={
+                      isVisible ? '/asset/visibility.svg' : '/asset/hide.svg'
+                    }
                     alt='Visibility'
                     className='cursor-pointer'
                     onClick={() => setIsVisible((prev) => !prev)}
@@ -332,9 +414,9 @@ const HomePage = () => {
           </div>
 
           <div className='bg-white p-6 mt-6 rounded-lg shadow-lg  bg-[#f9f9f9] text-black dark:bg-[#272727] dark:text-white'>
-            <div className='flex justify-between mb-6'>
+            <div className='flex flex-wrap justify-between mb-6'>
               <div
-                className='flex items-center border p-2 rounded-lg shadow-sm'
+                className='flex items-center border p-2 rounded-lg shadow-sm mb-2'
                 style={{
                   border: '1px solid #FFFFFF',
                   boxShadow: '0px 0px 10px 0px #5B5B5B1A',
@@ -350,6 +432,38 @@ const HomePage = () => {
               </div>
               <div className='flex items-center gap-4'>
                 <div className='flex items-center gap-2'>
+                  <label className='text-sm'>Time</label>
+                  <select
+                    className='p-2 border rounded-md shadow-sm text-sm'
+                    style={{
+                      border: '1px solid #FFFFFF',
+                      boxShadow: '0px 0px 10px 0px #5B5B5B1A',
+                    }}
+                    onChange={(e) => setTime(e.target.value)}
+                  >
+                    <option value='ALL_TIME'>All</option>
+                    <option value='TODAY'>Today</option>
+                    <option value='YESTERDAY'>Yesterday</option>
+                    <option value='THIS_WEEK'>Weekly</option>
+                    <option value='THIS_MONTH'>Monthly</option>
+                  </select>
+                </div>
+                <div className='flex items-center gap-2'>
+                  <label className='text-sm'>Type</label>
+                  <select
+                    className='p-2 border rounded-md shadow-sm text-sm'
+                    style={{
+                      border: '1px solid #FFFFFF',
+                      boxShadow: '0px 0px 10px 0px #5B5B5B1A',
+                    }}
+                    onChange={(e) => setType(e.target.value)}
+                  >
+                    <option value='TOP_UP'>Top Up</option>
+                    <option value='TRANSFER'>Transfer</option>
+                    <option value='ALL_TYPE'>All</option>
+                  </select>
+                </div>
+                <div className='flex items-center gap-2'>
                   <label className='text-sm'>Show</label>
                   <select
                     className='p-2 border rounded-md shadow-sm text-sm'
@@ -357,11 +471,11 @@ const HomePage = () => {
                       border: '1px solid #FFFFFF',
                       boxShadow: '0px 0px 10px 0px #5B5B5B1A',
                     }}
-                    onChange={(e) => setItemsPerPage(Number(e.target.value))}
+                    onChange={(e) => setItemsPerPage(e.target.value)}
                   >
-                    <option value='5'>Show 5 Transactions</option>
-                    <option value='10'>Show 10 Transactions</option>
-                    <option value='20'>Show 20 Transactions</option>
+                    <option value={5}>Last 5 Transactions</option>
+                    <option value={10}>Last 10 Transactions</option>
+                    <option value={20}>Last 20 Transactions</option>
                   </select>
                 </div>
                 <div className='flex items-center gap-2'>
@@ -374,8 +488,9 @@ const HomePage = () => {
                     }}
                     onChange={(e) => setSortBy(e.target.value)}
                   >
-                    <option value='date'>Date</option>
+                    <option value='transactionDate'>Date</option>
                     <option value='amount'>Amount</option>
+                    <option value='description'>Description</option>
                   </select>
                   <select
                     className='p-2 border rounded-md shadow-sm text-sm'
@@ -385,8 +500,8 @@ const HomePage = () => {
                     }}
                     onChange={(e) => setOrder(e.target.value)}
                   >
-                    <option value='asc'>Ascending</option>
                     <option value='desc'>Descending</option>
+                    <option value='asc'>Ascending</option>
                   </select>
                 </div>
               </div>
@@ -409,16 +524,25 @@ const HomePage = () => {
                     key={index}
                     className={index % 2 === 0 ? 'dark:text-black' : 'unset'}
                   >
-                    <td className='px-4 py-2'>{t.date}</td>
-                    <td className='px-4 py-2'>{t.type}</td>
-                    <td className='px-4 py-2'>{t.from}</td>
-                    <td className='px-4 py-2'>{t.description}</td>
+                    <td className='px-4 py-2'>
+                      {moment(t.transactionDate).format('HH:mm - D MMMM YYYY')}
+                    </td>
+                    <td className='px-4 py-2'>
+                      {t.transactionType === 'TOP_UP' ? 'TOP UP' : 'TRANSFER'}
+                    </td>
+                    <td className='px-4 py-2'>
+                      {t.option || t.recipientWalletId || ''}
+                    </td>
+                    <td className='px-4 py-2'>{t.description || '-'}</td>
                     <td
                       className={`px-4 py-2 ${
-                        t.amount > 0 ? 'text-green-500' : 'text-red-500'
+                        isPositive(t.transactionType)
+                          ? 'text-green-500'
+                          : 'text-red-500'
                       }`}
                     >
-                      {t.amount.toLocaleString()}
+                      {isPositive(t.transactionType) ? '+' : '-'}{' '}
+                      {toRupiah(t.amount)}
                     </td>
                   </tr>
                 ))}
