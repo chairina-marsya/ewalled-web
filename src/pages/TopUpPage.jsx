@@ -1,16 +1,58 @@
 import React, { useState } from 'react'
+import axios from 'axios'
+import { useUserStore } from '../../store/userStore'
+import { useWalletStore } from '../../store/walletStore'
+import { useNavigate } from 'react-router-dom'
 
 const dummyReceivers = [
-  { id: 1, name: 'Giz', account: '900782139' },
-  { id: 2, name: 'John Doe', account: '123456789' },
-  { id: 3, name: 'Jane Smith', account: '987654321' },
+  { id: 1, name: 'BYOND Pay' },
+  { id: 2, name: 'Credit card' },
+  { id: 3, name: 'Bank transfer' },
 ]
 
 const TopUpPage = () => {
   const [selectedReceiver, setSelectedReceiver] = useState(dummyReceivers[0].id)
+  const [amount, setAmount] = useState(null)
+  const [description, setDescription] = useState(null)
+  const { user, setUser } = useUserStore()
+  const { wallet, setWallet } = useWalletStore()
+  const navigate = useNavigate()
 
   const handleSelectChange = (event) => {
     setSelectedReceiver(parseInt(event.target.value, 10))
+  }
+
+  const onTransactionRequest = () => {
+    console.log('cliick')
+    const token = localStorage.getItem('token')
+    const url = 'http://localhost:8080/api/transactions'
+
+    const data = {
+      walletId: wallet.id,
+      transactionType: 'TOP_UP',
+      amount: amount,
+      recipientAccountNumber: '',
+      description: description,
+      option: selectedReceiver,
+    }
+
+    const headers = {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    }
+
+    axios
+      .post(url, data, { headers })
+      .then((response) => {
+        console.log('Success:', response.data)
+        // navigate('/transaction-success')
+        navigate('/transaction-success', {
+          state: response.data,
+        })
+      })
+      .catch((error) => {
+        console.error('Error:', error)
+      })
   }
 
   return (
@@ -27,7 +69,13 @@ const TopUpPage = () => {
               <label className='text-gray-400 text-sm'>Amount</label>
               <div className='flex items-end gap-2 mt-1'>
                 <span className='text-sm font-semibold'>IDR</span>
-                <p className='text-2xl font-semibold'>100.000</p>
+                <input
+                  type='number'
+                  placeholder='10.0000'
+                  value={amount}
+                  onChange={(e) => setAmount(e.target.value)}
+                  className='w-full bg-transparent border-none text-2xl font-semibold dark:bg-[#272727] dark:text-white'
+                />
               </div>
             </div>
 
@@ -45,7 +93,7 @@ const TopUpPage = () => {
                     value={receiver.id}
                     className='text-black'
                   >
-                    {receiver.account} ({receiver.name})
+                    {receiver.name}
                   </option>
                 ))}
               </select>
@@ -73,11 +121,16 @@ const TopUpPage = () => {
                 type='text'
                 className='w-full bg-transparent border-b border-gray-300 focus:outline-none text-sm dark:text-white'
                 placeholder='Write a note...'
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
               />
             </div>
 
             {/* Button */}
-            <button className='w-full py-3 bg-[#0057FF] text-white font-semibold rounded-lg shadow-md'>
+            <button
+              className='w-full py-3 bg-[#0057FF] text-white font-semibold rounded-lg shadow-md'
+              onClick={() => onTransactionRequest()}
+            >
               Top Up
             </button>
           </div>
@@ -94,9 +147,14 @@ const TopUpPage = () => {
                 <span className='text-sm font-semibold text-gray-700 dark:text-white'>
                   Amount
                 </span>
-                <p className='text-2xl font-bold text-gray-900 mt-1 dark:text-white'>
-                  IDR 150.000,00
-                </p>
+                <span className='text-sm font-semibold'>IDR</span>
+                <input
+                  type='number'
+                  placeholder='10.0000'
+                  // value={amount}
+                  onChange={(e) => setAmount(e.target.value)}
+                  className='w-full bg-transparent border-none text-2xl font-semibold dark:bg-[#272727] dark:text-white'
+                />
                 <hr className='border-black mt-2' />
               </div>
 
@@ -112,7 +170,7 @@ const TopUpPage = () => {
                 >
                   {dummyReceivers.map((receiver) => (
                     <option key={receiver.id} value={receiver.id}>
-                      {receiver.account} ({receiver.name})
+                      {receiver.name}
                     </option>
                   ))}
                 </select>
@@ -127,12 +185,17 @@ const TopUpPage = () => {
                   type='text'
                   placeholder='Write a note...'
                   className='w-full bg-transparent focus:outline-none text-smdark:text-white'
+                  // value={description}
+                  onChange={(e) => setDescription(e.target.value)}
                 />
               </div>
 
               {/* Button */}
-              <button className='w-full py-3 bg-blue-600 hover:bg-blue-700 text-white text-lg font-semibold rounded-xl shadow-md transition'>
-                Transfer
+              <button
+                className='w-full py-3 bg-blue-600 hover:bg-blue-700 text-white text-lg font-semibold rounded-xl shadow-md transition'
+                onClick={() => onTransactionRequest()}
+              >
+                Top Up
               </button>
             </div>
           </div>

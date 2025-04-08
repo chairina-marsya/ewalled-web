@@ -131,6 +131,7 @@ const HomePage = () => {
   }, [sortBy, order, time, type])
 
   const getTransactionHistory = (id) => {
+    token = localStorage.getItem('token')
     const url = 'http://localhost:8080/api/transactions/filter'
 
     const params = {
