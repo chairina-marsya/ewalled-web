@@ -34,7 +34,7 @@ const HomePage = () => {
   const [sortBy, setSortBy] = useState('transactionDate')
   const [order, setOrder] = useState('desc')
   const [time, setTime] = useState('ALL_TIME')
-  const [type, setType] = useState('TOP_UP')
+  const [type, setType] = useState(null)
   const [page, setPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
   const [paginatedTransactions, setPaginatedTransactions] = useState([])
@@ -111,7 +111,7 @@ const HomePage = () => {
             }
           } catch (error) {
             console.error('Error fetching user data:', error.message)
-            showAlert(`Oop! ${error.message}`, 'OK', null)
+            showAlert(`Oop! ${error.message}`, 'OK', handleConfirmLogout)
           }
           console.log(responseUser.data)
         } catch (error) {
@@ -459,9 +459,9 @@ const HomePage = () => {
                     }}
                     onChange={(e) => setType(e.target.value)}
                   >
+                    <option value={null}>All</option>
                     <option value='TOP_UP'>Top Up</option>
                     <option value='TRANSFER'>Transfer</option>
-                    <option value='ALL_TYPE'>All</option>
                   </select>
                 </div>
                 <div className='flex items-center gap-2'>

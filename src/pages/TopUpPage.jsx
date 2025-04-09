@@ -1,8 +1,9 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 import { useUserStore } from '../../store/userStore'
 import { useWalletStore } from '../../store/walletStore'
 import { useNavigate } from 'react-router-dom'
+import { showAlert } from '../components/organisms/ShowAlert'
 
 const dummyReceivers = [
   { id: 1, name: 'BYOND Pay' },
@@ -11,19 +12,30 @@ const dummyReceivers = [
 ]
 
 const TopUpPage = () => {
-  const [selectedReceiver, setSelectedReceiver] = useState(dummyReceivers[0].id)
+  const [selectedReceiver, setSelectedReceiver] = useState(
+    dummyReceivers[0].name
+  )
   const [amount, setAmount] = useState(null)
   const [description, setDescription] = useState(null)
-  const { user, setUser } = useUserStore()
-  const { wallet, setWallet } = useWalletStore()
+  const { wallet } = useWalletStore()
   const navigate = useNavigate()
 
+  useEffect(() => {
+    const token = localStorage.getItem('token')
+    if (!token || token === null || token === undefined) {
+      showAlert(
+        `Sesi anda habis. Silahkan login kembali.`,
+        'OK',
+        handleConfirmLogout
+      )
+    }
+  }, [])
+
   const handleSelectChange = (event) => {
-    setSelectedReceiver(parseInt(event.target.value, 10))
+    setSelectedReceiver(event.target.value)
   }
 
   const onTransactionRequest = () => {
-    console.log('cliick')
     const token = localStorage.getItem('token')
     const url = 'http://localhost:8080/api/transactions'
 
@@ -55,6 +67,10 @@ const TopUpPage = () => {
       })
   }
 
+  const handleConfirmLogout = () => {
+    navigate('/login')
+  }
+
   return (
     <div className='min-h-screen  bg-[#f9f9f9] text-black dark:bg-black dark:text-white'>
       {/* mobile */}
@@ -71,7 +87,7 @@ const TopUpPage = () => {
                 <span className='text-sm font-semibold'>IDR</span>
                 <input
                   type='number'
-                  placeholder='10.0000'
+                  placeholder='10.000'
                   value={amount}
                   onChange={(e) => setAmount(e.target.value)}
                   className='w-full bg-transparent border-none text-2xl font-semibold dark:bg-[#272727] dark:text-white'
@@ -90,7 +106,7 @@ const TopUpPage = () => {
                 {dummyReceivers.map((receiver) => (
                   <option
                     key={receiver.id}
-                    value={receiver.id}
+                    value={receiver.name}
                     className='text-black'
                   >
                     {receiver.name}
@@ -144,17 +160,19 @@ const TopUpPage = () => {
             <div className='w-full max-w-md p-6 rounded-2xl shadow text-left dark:bg-[#272727] dark:text-white'>
               {/* Amount Section */}
               <div className='bg-gray-100 p-4 rounded-xl mb-2 dark:bg-black dark:text-white'>
-                <span className='text-sm font-semibold text-gray-700 dark:text-white'>
+                <p className='text-sm font-semibold text-gray-700 dark:text-white'>
                   Amount
-                </span>
-                <span className='text-sm font-semibold'>IDR</span>
-                <input
-                  type='number'
-                  placeholder='10.0000'
-                  // value={amount}
-                  onChange={(e) => setAmount(e.target.value)}
-                  className='w-full bg-transparent border-none text-2xl font-semibold dark:bg-[#272727] dark:text-white'
-                />
+                </p>
+                <div className='flex item-center gap-3'>
+                  <p className='text-sm font-semibold'>IDR</p>
+                  <input
+                    type='number'
+                    placeholder='10.000'
+                    // value={amount}
+                    onChange={(e) => setAmount(e.target.value)}
+                    className='w-full bg-transparent border-none text-2xl font-semibold dark:bg-[#272727] dark:text-white'
+                  />
+                </div>
                 <hr className='border-black mt-2' />
               </div>
 
@@ -169,7 +187,7 @@ const TopUpPage = () => {
                   onChange={handleSelectChange}
                 >
                   {dummyReceivers.map((receiver) => (
-                    <option key={receiver.id} value={receiver.id}>
+                    <option key={receiver.id} value={receiver.name}>
                       {receiver.name}
                     </option>
                   ))}

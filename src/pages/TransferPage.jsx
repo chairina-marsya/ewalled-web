@@ -1,18 +1,105 @@
-import React, { useState } from 'react'
+import axios from 'axios'
+import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-
-const dummyReceivers = [
-  { id: 1, name: 'Giz', account: '900782139' },
-  { id: 2, name: 'John Doe', account: '123456789' },
-  { id: 3, name: 'Jane Smith', account: '987654321' },
-]
+import { useWalletStore } from '../../store/walletStore'
+import { showAlert } from '../components/organisms/ShowAlert'
 
 const TransferPage = () => {
   const navigate = useNavigate()
-  const [selectedReceiver, setSelectedReceiver] = useState(dummyReceivers[0].id)
+  const [selectedReceiver, setSelectedReceiver] = useState({})
+  const [accountData, setAccountData] = useState([])
+  const [receiverAcc, setReceiverAcc] = useState([])
+  const [amount, setAmount] = useState(null)
+  const [description, setDescription] = useState(null)
+  const { wallet } = useWalletStore()
+
+  useEffect(() => {
+    const token = localStorage.getItem('token')
+    if (!token || token === null || token === undefined) {
+      showAlert(
+        `Sesi anda habis. Silahkan login kembali.`,
+        'OK',
+        handleConfirmLogout
+      )
+    }
+
+    try {
+      axios
+        .get('http://localhost:8080/api/wallets', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+        .then((response) => {
+          const { data } = response
+          setAccountData(filteredWallets(data).currAcct)
+          setReceiverAcc(filteredWallets(data).otherAcct)
+          setSelectedReceiver(filteredWallets(data).otherAcct[0])
+        })
+        .catch((error) => {
+          console.error('Error fetching wallets:', error)
+        })
+    } catch (error) {
+      showAlert(`Oops. ${error.message}.`, 'OK', null)
+    }
+  }, [])
+
+  const filteredWallets = (data) => {
+    const { id } = wallet
+    const currAcct = data.filter((item) => item.id === id)
+    const otherAcct = data.filter((item) => item.id !== id)
+
+    return { currAcct, otherAcct }
+  }
 
   const handleSelectChange = (event) => {
-    setSelectedReceiver(parseInt(event.target.value, 10))
+    setSelectedReceiver(event.target.value)
+  }
+
+  const handleConfirmLogout = () => {
+    navigate('/login')
+  }
+
+  const toRupiah = (number) => {
+    return new Intl.NumberFormat('id-ID', {
+      style: 'currency',
+      currency: 'IDR',
+      minimumFractionDigits: 0,
+    }).format(number)
+  }
+
+  const onTransactionRequest = () => {
+    const token = localStorage.getItem('token')
+    const url = 'http://localhost:8080/api/transactions'
+
+    const data = {
+      walletId: wallet.id,
+      transactionType: 'TRANSFER',
+      amount: amount,
+      recipientAccountNumber: selectedReceiver.accountNumber,
+      description: description,
+      option: '',
+    }
+
+    const headers = {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    }
+
+    axios
+      .post(url, data, { headers })
+      .then((response) => {
+        console.log('Success:', response.data)
+        // navigate('/transaction-success')
+        navigate('/transaction-success', {
+          state: response.data,
+        })
+      })
+      .catch((error) => {
+        console.error('Error:', error)
+        const inline = Object.values(error.response.data).join(', ')
+        showAlert(`Oops. ${inline}.`, 'OK', null)
+      })
   }
 
   return (
@@ -32,15 +119,16 @@ const TransferPage = () => {
                 value={selectedReceiver}
                 onChange={handleSelectChange}
               >
-                {dummyReceivers.map((receiver) => (
-                  <option
-                    key={receiver.id}
-                    value={receiver.id}
-                    className='text-black'
-                  >
-                    {receiver.account} ({receiver.name})
-                  </option>
-                ))}
+                {receiverAcc &&
+                  receiverAcc.map((receiver) => (
+                    <option
+                      key={receiver.id}
+                      value={receiver.accountNumber}
+                      className='text-black'
+                    >
+                      {receiver.accountNumber} ({receiver.user.fullname})
+                    </option>
+                  ))}
               </select>
 
               {/* Down Arrow Icon */}
@@ -65,12 +153,18 @@ const TransferPage = () => {
               <label className='text-gray-400 text-sm'>Amount</label>
               <div className='flex items-end gap-2 mt-1'>
                 <span className='text-sm font-semibold'>IDR</span>
-                <p className='text-2xl font-semibold'>100.000</p>
+                <input
+                  type='number'
+                  placeholder='10.000'
+                  value={amount}
+                  onChange={(e) => setAmount(e.target.value)}
+                  className='w-full bg-transparent border-none text-2xl font-semibold dark:bg-[#272727] dark:text-white'
+                />
               </div>
               <div className='flex justify-between items-center border-t border-gray-300 pt-2 mt-2'>
                 <span className='text-xs text-gray-400'>Balance</span>
                 <span className='text-xs text-blue-600 font-semibold'>
-                  IDR 10.000.000
+                  {toRupiah(accountData?.[0]?.balance ?? 0)}
                 </span>
               </div>
             </div>
@@ -82,13 +176,14 @@ const TransferPage = () => {
                 type='text'
                 className='w-full bg-transparent border-b border-gray-300 focus:outline-none text-sm text-black'
                 placeholder='Write a note...'
+                onChange={(e) => setDescription(e.target.value)}
               />
             </div>
 
             {/* Button */}
             <button
               className='w-full py-3 bg-[#0057FF] text-white font-semibold rounded-lg shadow-md'
-              onClick={() => navigate('/transaction-success')}
+              onClick={() => onTransactionRequest()}
             >
               Transfer
             </button>
@@ -111,26 +206,33 @@ const TransferPage = () => {
                   value={selectedReceiver}
                   onChange={handleSelectChange}
                 >
-                  {dummyReceivers.map((receiver) => (
-                    <option key={receiver.id} value={receiver.id}>
-                      {receiver.account} ({receiver.name})
-                    </option>
-                  ))}
+                  {receiverAcc &&
+                    receiverAcc.map((receiver) => (
+                      <option key={receiver.id} value={receiver.id}>
+                        {receiver.accountNumber} ({receiver.user.fullname})
+                      </option>
+                    ))}
                 </select>
               </div>
 
               {/* Amount Section */}
               <div className='bg-gray-100 p-4 rounded-xl mb-2 dark:bg-black dark:text-white'>
-                <span className='text-sm font-semibold text-700'>Amount</span>
-                <p className='text-2xl font-bold text-900 mt-1'>
-                  IDR 150.000,00
-                </p>
+                <div className='flex items-end gap-2 mt-1'>
+                  <span className='text-sm font-semibold'>IDR</span>
+                  <input
+                    type='number'
+                    placeholder='10.000'
+                    value={amount}
+                    onChange={(e) => setAmount(e.target.value)}
+                    className='w-full bg-transparent border-none text-2xl font-semibold dark:bg-[#272727] dark:text-white'
+                  />
+                </div>
                 <hr className='border-black mt-2' />
               </div>
               <p className='text-sm text-gray-500 mb-4'>
                 Balance:{' '}
                 <span className='text-teal-600 font-medium'>
-                  IDR 10.000.000
+                  {toRupiah(accountData?.[0]?.balance ?? 0)}
                 </span>
               </p>
 
@@ -143,13 +245,14 @@ const TransferPage = () => {
                   type='text'
                   placeholder='Write a note...'
                   className='w-full bg-transparent focus:outline-none text-sm'
+                  onChange={(e) => setDescription(e.target.value)}
                 />
               </div>
 
               {/* Button */}
               <button
                 className='w-full py-3 bg-blue-600 hover:bg-blue-700 text-white text-lg font-semibold rounded-xl shadow-md transition'
-                onClick={() => navigate('/transaction-success')}
+                onClick={() => onTransactionRequest()}
               >
                 Transfer
               </button>

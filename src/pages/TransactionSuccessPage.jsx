@@ -101,18 +101,53 @@ export default function TransactionSuccessCard() {
           </div>
           <hr className='mb-2' />
 
-          <div className='flex justify-between mb-1'>
-            <div className='text-sm text-gray-500 dark:text-gray-400'>
-              Sender
-            </div>
-            <div className='flex flex-col items-end'>
-              <div className='font-semibold'>{dataTrans.option}</div>
-              {/* <div className='text-sm text-gray-500 dark:text-gray-400'>
+          {dataTrans && dataTrans.transactionType == 'TOP_UP' ? (
+            <>
+              <div className='flex justify-between mb-1'>
+                <div className='text-sm text-gray-500 dark:text-gray-400'>
+                  From
+                </div>
+                <div className='flex flex-col items-end'>
+                  <div className='font-semibold'>{dataTrans.option}</div>
+                  {/* <div className='text-sm text-gray-500 dark:text-gray-400'>
                 112233445566
               </div> */}
-            </div>
-          </div>
-          <hr className='mb-2' />
+                </div>
+              </div>
+              <hr className='mb-2' />
+            </>
+          ) : (
+            <>
+              <div className='flex justify-between mb-1'>
+                <div className='text-sm text-gray-500 dark:text-gray-400'>
+                  Recipient
+                </div>
+                <div className='flex flex-col items-end'>
+                  <div className='font-semibold'>
+                    {dataTrans.receiverFullname}
+                  </div>
+                  <div className='text-sm text-gray-500 dark:text-gray-400'>
+                    {dataTrans.receiverAccountNumber}
+                  </div>
+                </div>
+              </div>
+              <hr className='mb-2' />
+              <div className='flex justify-between mb-1'>
+                <div className='text-sm text-gray-500 dark:text-gray-400'>
+                  Sender
+                </div>
+                <div className='flex flex-col items-end'>
+                  <div className='font-semibold'>
+                    {dataTrans.senderFullname}
+                  </div>
+                  <div className='text-sm text-gray-500 dark:text-gray-400'>
+                    {dataTrans.senderAccountNumber}
+                  </div>
+                </div>
+              </div>
+              <hr className='mb-2' />
+            </>
+          )}
 
           {/* Expand/Collapse */}
           {expanded ? (
