@@ -13,18 +13,20 @@ const LoginForm = ({
   <form className='space-y-4' onSubmit={onSubmit}>
     {error && <p className='text-red-500 text-sm'>{error}</p>}
     <Input
+      inputId='username-login'
       type='text'
       placeholder='Username'
       value={email}
       onChange={onEmailChange}
     />
     <Input
+      inputId='password-login'
       type='password'
       placeholder='Password'
       value={password}
       onChange={onPasswordChange}
     />
-    <Button>Login</Button>
+    <Button idButton='login-button'>Login</Button>
   </form>
 )
 

@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Eye, EyeOff } from 'lucide-react' // Optional: using Lucide icons
 
-const Input = ({ type, placeholder, value, onChange }) => {
+const Input = ({ inputId, type, placeholder, value, onChange }) => {
   const [showPassword, setShowPassword] = useState(false)
 
   const isPassword = type === 'password'
@@ -10,6 +10,7 @@ const Input = ({ type, placeholder, value, onChange }) => {
   return (
     <div className='relative w-full'>
       <input
+        id={inputId}
         type={inputType}
         placeholder={placeholder}
         value={value}
