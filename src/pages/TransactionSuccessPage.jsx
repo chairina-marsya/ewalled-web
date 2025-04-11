@@ -3,6 +3,7 @@ import axios from 'axios'
 import { ChevronDown, ChevronUp, Share2, Download } from 'lucide-react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import moment from 'moment'
+import { showAlert } from '../components/organisms/ShowAlert'
 
 export default function TransactionSuccessCard() {
   const [expanded, setExpanded] = useState(false)
@@ -32,16 +33,17 @@ export default function TransactionSuccessCard() {
           axios
             .get(url, { headers })
             .then((response) => {
-              console.log('Transaction Data:', response.data)
               setDataTrans(response.data)
             })
             .catch((error) => {
-              console.error('Error fetching transaction:', error)
-              showAlert(`Oop! ${error.message}`, 'OK', null)
+              const inline = Object.values(error.response.data).join(', ')
+              console.error('Error:', error)
+              showAlert(`Oop! ${inline}`, 'OK', null)
             })
         } catch (error) {
-          console.error('Error fetching user data:', error.message)
-          showAlert(`Oop! ${error.message}`, 'OK', null)
+          const inline = Object.values(error.response.data).join(', ')
+          console.error('Error:', error)
+          showAlert(`Oop! ${inline}`, 'OK', null)
         }
       }
 
@@ -59,6 +61,31 @@ export default function TransactionSuccessCard() {
       currency: 'IDR',
       minimumFractionDigits: 0,
     }).format(number)
+  }
+
+  const onDownloadReceipt = () => {
+    const token = localStorage.getItem('token')
+    const url = `http://localhost:8080/api/transactions/export-pdf/${dataTrans.id}`
+    const headers = {
+      Authorization: `Bearer ${token}`,
+    }
+
+    axios
+      .get(url, { headers })
+      .then((response) => {
+        // Handle file download (e.g., in browser)
+        const url = window.URL.createObjectURL(new Blob([response.data]))
+        const link = document.createElement('a')
+        link.href = url
+        link.setAttribute('download', `transactions-${dataTrans.id}.pdf`) // change filename if needed
+        document.body.appendChild(link)
+        link.click()
+        showAlert('Downloaded', 'OK', null)
+      })
+      .catch((error) => {
+        console.error('Error:', error)
+        showAlert(`Oop! ${error.message}`, 'OK', null)
+      })
   }
 
   return (
@@ -81,8 +108,10 @@ export default function TransactionSuccessCard() {
           </svg>
         </div>
         <div>
-          <p className='font-semibold'>Transaction Success</p>
-          <p className='text-sm'>
+          <p className='font-semibold' id='transaction-success-title'>
+            Transaction Success
+          </p>
+          <p className='text-sm' id='transaction-success-time'>
             {moment(dataTrans.transactionDate).format('HH:mm - D MMMM YYYY')}
           </p>
         </div>
@@ -92,10 +121,13 @@ export default function TransactionSuccessCard() {
       <div className='max-w-md mx-auto'>
         <div className='border shadow-xl border-gray-700 p-4 bg-white rounded-sm dark:bg-[#272727] dark:text-white'>
           <div className='flex justify-between mb-1'>
-            <div className='text-sm text-gray-500 dark:text-gray-400'>
+            <div
+              className='text-sm text-gray-500 dark:text-gray-400'
+              id='transaction-amount-title'
+            >
               Amount
             </div>
-            <div className='font-bold text-right'>
+            <div className='font-bold text-right' id='transaction-amount'>
               {toRupiah(dataTrans.amount ?? 0)}
             </div>
           </div>
@@ -104,11 +136,16 @@ export default function TransactionSuccessCard() {
           {dataTrans && dataTrans.transactionType == 'TOP_UP' ? (
             <>
               <div className='flex justify-between mb-1'>
-                <div className='text-sm text-gray-500 dark:text-gray-400'>
+                <div
+                  className='text-sm text-gray-500 dark:text-gray-400'
+                  id='transaction-from-title'
+                >
                   From
                 </div>
                 <div className='flex flex-col items-end'>
-                  <div className='font-semibold'>{dataTrans.option}</div>
+                  <div className='font-semibold' id='transaction-from'>
+                    {dataTrans.option}
+                  </div>
                   {/* <div className='text-sm text-gray-500 dark:text-gray-400'>
                 112233445566
               </div> */}
@@ -119,28 +156,43 @@ export default function TransactionSuccessCard() {
           ) : (
             <>
               <div className='flex justify-between mb-1'>
-                <div className='text-sm text-gray-500 dark:text-gray-400'>
+                <div
+                  className='text-sm text-gray-500 dark:text-gray-400'
+                  id='transaction-receipient-title'
+                >
                   Recipient
                 </div>
                 <div className='flex flex-col items-end'>
-                  <div className='font-semibold'>
+                  <div
+                    className='font-semibold'
+                    id='transaction-receipient-number'
+                  >
                     {dataTrans.receiverFullname}
                   </div>
-                  <div className='text-sm text-gray-500 dark:text-gray-400'>
+                  <div
+                    className='text-sm text-gray-500 dark:text-gray-400'
+                    id='transaction-receipient-name'
+                  >
                     {dataTrans.receiverAccountNumber}
                   </div>
                 </div>
               </div>
               <hr className='mb-2' />
               <div className='flex justify-between mb-1'>
-                <div className='text-sm text-gray-500 dark:text-gray-400'>
+                <div
+                  className='text-sm text-gray-500 dark:text-gray-400'
+                  id='transaction-sender-title'
+                >
                   Sender
                 </div>
                 <div className='flex flex-col items-end'>
-                  <div className='font-semibold'>
+                  <div className='font-semibold' id='transaction-sender-name'>
                     {dataTrans.senderFullname}
                   </div>
-                  <div className='text-sm text-gray-500 dark:text-gray-400'>
+                  <div
+                    className='text-sm text-gray-500 dark:text-gray-400'
+                    id='transaction-sender-number'
+                  >
                     {dataTrans.senderAccountNumber}
                   </div>
                 </div>
@@ -166,18 +218,28 @@ export default function TransactionSuccessCard() {
               <hr className='mb-2' /> */}
 
               <div className='flex justify-between mb-1'>
-                <div className='text-sm text-gray-500 dark:text-gray-400'>
+                <div
+                  className='text-sm text-gray-500 dark:text-gray-400'
+                  id='transaction-id-title'
+                >
                   Transaction Id
                 </div>
-                <div className='text-right'>{dataTrans.id}</div>
+                <div className='text-right' id='transaction-id'>
+                  {dataTrans.id}
+                </div>
               </div>
               <hr className='mb-2' />
 
               <div className='flex justify-between mb-1'>
-                <div className='text-sm text-gray-500 dark:text-gray-400'>
+                <div
+                  className='text-sm text-gray-500 dark:text-gray-400'
+                  id='transaction-notes-title'
+                >
                   Notes
                 </div>
-                <div className='text-right'>{dataTrans.description}</div>
+                <div className='text-right' id='transaction-notes'>
+                  {dataTrans.description}
+                </div>
               </div>
               <hr className='mb-2' />
 
@@ -198,6 +260,7 @@ export default function TransactionSuccessCard() {
           <button
             onClick={() => setExpanded(!expanded)}
             className='w-full flex justify-between items-center text-left mt-2 text-black dark:text-white font-small'
+            id='transaction-expand'
           >
             Detail Transaction
             {expanded ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
@@ -206,14 +269,16 @@ export default function TransactionSuccessCard() {
         {/* Action buttons */}
         <div className='flex items-center justify-between mt-10'>
           <div className='flex space-x-4'>
-            <button className='bg-[#0061FF1A] text-white p-2 rounded-full'>
-              <Share2 size={20} />
-            </button>
-            <button className='bg-[#0061FF1A] text-white p-2 rounded-full'>
+            <button
+              id='download-button'
+              className='bg-[#0061FF1A] text-white p-2 rounded-full'
+              onClick={() => onDownloadReceipt()}
+            >
               <Download size={20} />
             </button>
           </div>
           <button
+            id='done-button'
             className='bg-[#0061FF] text-white px-30 py-2 rounded-md font-semibold'
             onClick={() => navigate('/')}
           >

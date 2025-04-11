@@ -30,10 +30,12 @@ const LoginPage = () => {
         )
 
         localStorage.setItem('token', response.data.token)
-        showAlert(`Selamat datang ${email}!`, 'OK', handleConfirm)
+        showAlert(`Welcome back, ${email}!`, 'OK', handleConfirm)
         setError(null)
       } catch (error) {
-        setError(error.message)
+        const inline = Object.values(error.response.data).join(', ')
+        setError(inline || error.message)
+        // setError(error.message)
       }
     }
 

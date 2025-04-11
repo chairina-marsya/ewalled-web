@@ -10,6 +10,9 @@ export const showAlert = (text, buttonText, onConfirm) => {
       popup: 'swal-popup',
       title: 'swal-title',
     },
+    inputAttributes: {
+      id: 'swal-alert',
+    },
   }).then((result) => {
     if (result.isConfirmed && onConfirm) {
       onConfirm()

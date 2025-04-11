@@ -30,9 +30,13 @@ const LoginBox = ({
         onSubmit={onSubmit}
         error={error}
       />
-      <p className='text-center mt-4 text-sm'>
+      <p id='no-account' className='text-center mt-4 text-sm'>
         Don’t have an account?{' '}
-        <LinkText text='Register here' href='/register' />
+        <LinkText
+          linkId='register-link'
+          text='Register here'
+          href='/register'
+        />
       </p>
     </div>
   )

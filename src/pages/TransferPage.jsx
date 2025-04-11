@@ -40,7 +40,9 @@ const TransferPage = () => {
           console.error('Error fetching wallets:', error)
         })
     } catch (error) {
-      showAlert(`Oops. ${error.message}.`, 'OK', null)
+      const inline = Object.values(error.response.data).join(', ')
+      console.error('Error fetching wallet:', error)
+      showAlert(`Oop! ${inline}`, 'OK', null)
     }
   }, [])
 

@@ -21,7 +21,7 @@ const RegisterForm = ({
     <Input
       inputId='fullname-register'
       type='text'
-      placeholder='Nama Lengkap'
+      placeholder='Full Name'
       value={fullName}
       onChange={onNameChange}
     />

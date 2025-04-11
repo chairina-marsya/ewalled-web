@@ -15,7 +15,7 @@ const LoginForm = ({
     <Input
       inputId='username-login'
       type='text'
-      placeholder='Username'
+      placeholder='Email'
       value={email}
       onChange={onEmailChange}
     />

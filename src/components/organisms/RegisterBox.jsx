@@ -22,6 +22,7 @@ const RegisterBox = ({
     <div className='max-w-md w-full bg-white p-6 dark:bg-black dark:text-white'>
       <div className='flex justify-center mb-10'>
         <img
+          id='walled-logo'
           src={isDark ? '/asset/walledwhite.svg' : '/asset/walled.svg'}
           alt='Logo'
           className='h-12'
@@ -42,8 +43,9 @@ const RegisterBox = ({
         onSubmit={onSubmit}
         error={error}
       />
-      <p className='text-center mt-4 text-sm'>
-        Sudah punya akun? <LinkText text='Login di sini' href='/login' />
+      <p id='have-account' className='text-center mt-4 text-sm'>
+        Already have an account?{' '}
+        <LinkText linkId='login-link' text='Login di sini' href='/login' />
       </p>
     </div>
   )

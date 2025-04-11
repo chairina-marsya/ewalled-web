@@ -37,7 +37,7 @@ const RegisterPage = ({ setIsAuthenticated }) => {
           }
         )
         showAlert(
-          `Selamat! Akun ${response.data.fullname} telah berhasil terdaftar. Silahkan login.`,
+          `Congratulations! ${response.data.fullname} is successfully created. Please login back.`,
           'OK',
           handleConfirm
         )

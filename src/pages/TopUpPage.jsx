@@ -17,6 +17,7 @@ const TopUpPage = () => {
   )
   const [amount, setAmount] = useState(null)
   const [description, setDescription] = useState(null)
+  const [loading, setLoading] = useState(false)
   const { wallet } = useWalletStore()
   const navigate = useNavigate()
 
@@ -57,13 +58,17 @@ const TopUpPage = () => {
       .post(url, data, { headers })
       .then((response) => {
         console.log('Success:', response.data)
+        setLoading(true)
         // navigate('/transaction-success')
         navigate('/transaction-success', {
           state: response.data,
         })
       })
       .catch((error) => {
-        console.error('Error:', error)
+        setLoading(false)
+        const inline = Object.values(error.response.data).join(', ')
+        console.error('Error fetching wallet:', error)
+        showAlert(`Oop! ${inline}`, 'OK', null)
       })
   }
 
@@ -146,8 +151,9 @@ const TopUpPage = () => {
             <button
               className='w-full py-3 bg-[#0057FF] text-white font-semibold rounded-lg shadow-md'
               onClick={() => onTransactionRequest()}
+              disabled={loading}
             >
-              Top Up
+              {loading ? '..Loading' : 'Top Up'}
             </button>
           </div>
         </div>
