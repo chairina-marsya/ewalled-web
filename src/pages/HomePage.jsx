@@ -46,10 +46,8 @@ const HomePage = () => {
   const { user, setUser } = useUserStore()
   const { wallet, setWallet } = useWalletStore()
 
-  let token = null
-
   useEffect(() => {
-    token = localStorage.getItem('token')
+    const token = localStorage.getItem('token')
     if (!token || token === null || token === undefined) {
       showAlert(
         `Sesi anda habis. Silahkan login kembali.`,
@@ -135,7 +133,7 @@ const HomePage = () => {
   }, [sortBy, order, time, type])
 
   const getTransactionHistory = (id) => {
-    token = localStorage.getItem('token')
+    const token = localStorage.getItem('token')
     const url = 'http://localhost:8080/api/transactions/filter'
 
     const params = {
@@ -408,7 +406,7 @@ const HomePage = () => {
               <div className='w-12 h-12 border-5 border-blue-600 rounded-full overflow-hidden'>
                 <img
                   id='account-avatar'
-                  src={user?.avatarUrl}
+                  src={user?.avatarUrl ?? '/asset/avatar.svg'}
                   alt='Profile'
                   className='object-cover w-full h-full'
                 />

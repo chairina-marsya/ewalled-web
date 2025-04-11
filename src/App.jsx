@@ -9,6 +9,7 @@ import TopUpPage from './pages/TopUpPage'
 import RegisterPage from './pages/RegisterPage'
 import Navbar from './components/organisms/Navbar'
 import TransactionSuccessCard from './pages/TransactionSuccessPage'
+import SummaryPage from './pages/SummayPage'
 
 function App() {
   const location = useLocation() // Get the current path
@@ -34,6 +35,7 @@ function App() {
         <Route path='/nofound' element={<NoFoundPage />} />
         <Route path='/transfer' element={<TransferPage />} />
         <Route path='/top-up' element={<TopUpPage />} />
+        <Route path='/summary' element={<SummaryPage />} />
         <Route
           path='/transaction-success'
           element={<TransactionSuccessCard />}

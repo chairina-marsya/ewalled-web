@@ -17,7 +17,7 @@ const Navbar = ({ onLogout }) => {
       <div className='flex items-center gap-3 lg:hidden'>
         <img
           id='avatar-account'
-          src={user?.avatarUrl}
+          src={user?.avatarUrl ?? '/asset/avatar.svg'}
           alt='Profile'
           className='w-10 h-10 rounded-full object-cover'
         />
@@ -43,6 +43,9 @@ const Navbar = ({ onLogout }) => {
       <div className='hidden lg:flex items-center gap-6'>
         <a id='dashboard-link' href='/' className='nav-link'>
           Dashboard
+        </a>
+        <a id='summary-link' href='/summary' className='nav-link'>
+          Summary
         </a>
         <a id='transfer-link' href='/transfer' className='nav-link'>
           Transfer
@@ -93,6 +96,9 @@ const Navbar = ({ onLogout }) => {
         <div className='absolute top-[8vh] left-0 w-full shadow-md px-6 py-4 flex flex-col gap-4 lg:hidden z-40 bg-white text-black dark:bg-[#272727] dark:text-white'>
           <a id='dashboard-link' href='/' className='nav-link'>
             Dashboard
+          </a>
+          <a id='summary-link' href='/summary' className='nav-link'>
+            Summary
           </a>
           <a id='transfer-link' href='/transfer' className='nav-link'>
             Transfer
