@@ -16,6 +16,8 @@ const RegisterBox = ({
   onPasswordChange,
   onSubmit,
   error,
+  tnc,
+  onCheckedTnc,
 }) => {
   const { isDark } = useTheme()
   return (
@@ -42,6 +44,8 @@ const RegisterBox = ({
         onPasswordChange={onPasswordChange}
         onSubmit={onSubmit}
         error={error}
+        tnc={tnc}
+        onCheckedTnc={onCheckedTnc}
       />
       <p id='have-account' className='text-center mt-4 text-sm'>
         Already have an account?{' '}

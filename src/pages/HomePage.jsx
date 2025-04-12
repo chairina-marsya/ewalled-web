@@ -81,7 +81,7 @@ const HomePage = () => {
               }
             )
 
-            const dataWallet = responseWalletByUser.data
+            const dataWallet = responseWalletByUser.data.data
             if (dataWallet && !dataWallet.length > 0) {
               try {
                 const responseCreateWallet = await axios.post(
@@ -97,11 +97,11 @@ const HomePage = () => {
                   }
                 )
 
-                const dataCreateWallet = responseCreateWallet.data
+                const dataCreateWallet = responseCreateWallet.data.data
                 setWallet(dataCreateWallet)
                 getTransactionHistory(dataCreateWallet.id)
               } catch (error) {
-                const inline = Object.values(error.response.data).join(', ')
+                const inline = error.response.data.message
                 console.error('Error fetching wallet:', error)
                 showAlert(`Oop! ${inline}`, 'OK', null)
               }
@@ -110,13 +110,12 @@ const HomePage = () => {
               getTransactionHistory(dataWallet[0].id)
             }
           } catch (error) {
-            const inline = Object.values(error.response.data).join(', ')
+            const inline = error.response.data.message
             console.error('Error fetching user data:', error.message)
             showAlert(`Oop! ${inline}`, 'OK', handleConfirmLogout)
           }
-          console.log(responseUser.data)
         } catch (error) {
-          const inline = Object.values(error.response.data).join(', ')
+          const inline = error.response.data.message
           console.error('Error fetching user data:', error.message)
           showAlert(`Oop! ${inline}`, 'OK', null)
         }
@@ -153,7 +152,7 @@ const HomePage = () => {
     axios
       .get(url, { params, headers })
       .then((response) => {
-        const dataTransaction = response.data.content
+        const dataTransaction = response.data.data.content
         setTransactions(dataTransaction)
         setTotalPages(Math.ceil(dataTransaction.length / itemsPerPage))
         setPaginatedTransactions(
@@ -161,7 +160,7 @@ const HomePage = () => {
         )
       })
       .catch((error) => {
-        const inline = Object.values(error.response.data).join(', ')
+        const inline = error.response.data.message
         console.error('Error:', error)
         showAlert(`Oop! ${inline}`, 'OK', null)
       })

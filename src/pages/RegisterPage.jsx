@@ -14,42 +14,49 @@ const RegisterPage = ({ setIsAuthenticated }) => {
   const [error, setError] = useState('')
   const [avatarUrl, setAvatarUrl] = useState('')
   const navigate = useNavigate()
+  const [tnc, setTnc] = useState(false)
 
   const handleLogin = (e) => {
     e.preventDefault()
 
-    const registerUser = async () => {
-      try {
-        const response = await axios.post(
-          'http://localhost:8080/api/auth/register',
-          {
-            email: email,
-            username: email,
-            fullname: name,
-            password: password,
-            phoneNumber: phone,
-            avatarUrl: avatarUrl,
-          },
-          {
-            headers: {
-              'Content-Type': 'application/json',
+    if (!tnc) {
+      setError(
+        'To continue, please input all required fileds and accept our Terms and Conditions.'
+      )
+    } else {
+      const registerUser = async () => {
+        try {
+          const response = await axios.post(
+            'http://localhost:8080/api/auth/register',
+            {
+              email: email,
+              username: email,
+              fullname: name,
+              password: password,
+              phoneNumber: phone,
+              avatarUrl: avatarUrl,
             },
-          }
-        )
-        showAlert(
-          `Congratulations! ${response.data.fullname} is successfully created. Please login back.`,
-          'OK',
-          handleConfirm
-        )
-        setError(null)
-      } catch (error) {
-        const inline = Object.values(error.response.data).join(', ')
-        setError(inline || error.message)
+            {
+              headers: {
+                'Content-Type': 'application/json',
+              },
+            }
+          )
+          showAlert(
+            `Congratulations! ${response.data.message}.`,
+            'OK',
+            handleConfirm
+          )
+          setError(null)
+        } catch (error) {
+          const inline = error.response.data.message
+          setError(inline)
+        }
       }
-    }
 
-    // Call the function
-    registerUser()
+      // Call the function
+      registerUser()
+    }
   }
 
   const handleConfirm = () => {
@@ -73,6 +80,8 @@ const RegisterPage = ({ setIsAuthenticated }) => {
           onPasswordChange={(e) => setPassword(e.target.value)}
           onSubmit={handleLogin}
           error={error}
+          tnc={tnc}
+          onCheckedTnc={(e) => setTnc(e.target.checked)}
         />
       </div>
 

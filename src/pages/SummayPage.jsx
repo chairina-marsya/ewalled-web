@@ -99,7 +99,7 @@ export default function SummaryPage() {
         headers: headers,
       })
       .then((response) => {
-        const { data } = response
+        const { data } = response.data
         setTotalBalance(data.balance)
         setTotalIncome(data.totalIncome)
         setTotalOutcome(data.totalOutcome)
@@ -130,11 +130,11 @@ export default function SummaryPage() {
         headers: headers,
       })
       .then((response) => {
-        console.log(response.data)
-        const { data } = response
+        const { data } = response.data
         const labelsMap = data.data.map((item) => item.label)
-        const incomeMap = data.data.map((item) => toRupiah(item.income))
-        const outcomeMap = data.data.map((item) => toRupiah(item.outcome))
+        const incomeMap = data.data.map((item) => item.income)
+        const outcomeMap = data.data.map((item) => item.outcome)
+        console.log(labelsMap, incomeMap, outcomeMap)
         const graphData = {
           labels: labelsMap,
           datasets: [

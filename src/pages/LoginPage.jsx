@@ -28,13 +28,13 @@ const LoginPage = () => {
             },
           }
         )
-
-        localStorage.setItem('token', response.data.token)
-        showAlert(`Welcome back, ${email}!`, 'OK', handleConfirm)
+        console.log(response.data)
+        localStorage.setItem('token', response.data.data.token)
+        showAlert(`Welcome back! ${response.data.message}`, 'OK', handleConfirm)
         setError(null)
       } catch (error) {
-        const inline = Object.values(error.response.data).join(', ')
-        setError(inline || error.message)
+        const inline = error.response.data.message
+        setError(inline)
         // setError(error.message)
       }
     }

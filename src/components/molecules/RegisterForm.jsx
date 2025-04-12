@@ -1,6 +1,8 @@
 import React from 'react'
 import Input from '../atoms/Input'
 import Button from '../atoms/Button'
+import LinkText from '../atoms/LinkText'
+import { showTnc } from '../organisms/ShowTnc'
 
 const RegisterForm = ({
   email,
@@ -15,6 +17,8 @@ const RegisterForm = ({
   onPasswordChange,
   onSubmit,
   error,
+  tnc,
+  onCheckedTnc,
 }) => (
   <form className='space-y-4' onSubmit={onSubmit}>
     {error && <p className='text-red-500 text-sm'>{error}</p>}
@@ -53,7 +57,24 @@ const RegisterForm = ({
       value={avatarUrl}
       onChange={onAvatarUrl}
     />
-    <Button idButton='register-button'>Daftar</Button>
+    <label className='flex items-center space-x-3'>
+      <input type='checkbox' checked={tnc} onChange={onCheckedTnc} />
+      <span className='text-sm text-gray-700'>
+        <p id='tnc-account' className='text-left text-sm'>
+          I have read and agree to the{' '}
+          <LinkText
+            linkId='tnc-link'
+            text='Terms and Conditions'
+            onClick={() => showTnc()}
+          />
+          <span id='mandatory' className='text-red-600'>
+            {' '}
+            *
+          </span>
+        </p>
+      </span>
+    </label>
+    <Button idButton='register-button'>Register</Button>
   </form>
 )
 

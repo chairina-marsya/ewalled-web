@@ -11,9 +11,11 @@ const TransferPage = () => {
   const [receiverAcc, setReceiverAcc] = useState([])
   const [amount, setAmount] = useState(null)
   const [description, setDescription] = useState(null)
+  const [loading, setLoading] = useState(false)
   const { wallet } = useWalletStore()
 
   useEffect(() => {
+    setLoading(true)
     const token = localStorage.getItem('token')
     if (!token || token === null || token === undefined) {
       showAlert(
@@ -31,16 +33,19 @@ const TransferPage = () => {
           },
         })
         .then((response) => {
-          const { data } = response
+          setLoading(false)
+          const { data } = response.data
+          console.log(data)
           setAccountData(filteredWallets(data).currAcct)
           setReceiverAcc(filteredWallets(data).otherAcct)
           setSelectedReceiver(filteredWallets(data).otherAcct[0])
         })
         .catch((error) => {
+          setLoading(false)
           console.error('Error fetching wallets:', error)
         })
     } catch (error) {
-      const inline = Object.values(error.response.data).join(', ')
+      const inline = error.response.data.message
       console.error('Error fetching wallet:', error)
       showAlert(`Oop! ${inline}`, 'OK', null)
     }
@@ -71,6 +76,7 @@ const TransferPage = () => {
   }
 
   const onTransactionRequest = () => {
+    setLoading(true)
     const token = localStorage.getItem('token')
     const url = 'http://localhost:8080/api/transactions'
 
@@ -91,15 +97,17 @@ const TransferPage = () => {
     axios
       .post(url, data, { headers })
       .then((response) => {
+        setLoading(false)
         console.log('Success:', response.data)
         // navigate('/transaction-success')
         navigate('/transaction-success', {
-          state: response.data,
+          state: response.data.data,
         })
       })
       .catch((error) => {
+        setLoading(false)
         console.error('Error:', error)
-        const inline = Object.values(error.response.data).join(', ')
+        const inline = error.response.data.message
         showAlert(`Oops. ${inline}.`, 'OK', null)
       })
   }
@@ -111,12 +119,20 @@ const TransferPage = () => {
         <div className='min-h-screen px-4 py-6 lg:py-10 flex flex-col items-center'>
           <div className='w-full max-w-md'>
             {/* Header */}
-            <h2 className='text-lg font-bold mb-4 lg:hidden'>Transfer</h2>
+            <h2
+              className='text-lg font-bold mb-4 lg:hidden'
+              id='transfer-title'
+            >
+              Transfer
+            </h2>
 
             {/* Receiver Selector */}
             <div className='bg-[#0057FF] text-white px-4 py-3 rounded-xl flex justify-between items-center mb-4'>
-              <label className='text-white font-semibold mr-2'>To:</label>
+              <label className='text-white font-semibold mr-2' id='to-title'>
+                To:
+              </label>
               <select
+                id='to-account'
                 className='bg-transparent text-white flex-1 focus:outline-none appearance-none pr-6'
                 value={selectedReceiver}
                 onChange={handleSelectChange}
@@ -152,10 +168,13 @@ const TransferPage = () => {
 
             {/* Amount */}
             <div className='rounded-xl p-4 mb-4 bg-[#f9f9f9] dark:bg-[#272727] dark:text-white'>
-              <label className='text-gray-400 text-sm'>Amount</label>
+              <label className='text-gray-400 text-sm' id='amount-title'>
+                Amount
+              </label>
               <div className='flex items-end gap-2 mt-1'>
                 <span className='text-sm font-semibold'>IDR</span>
                 <input
+                  id='amount'
                   type='number'
                   placeholder='10.000'
                   value={amount}
@@ -164,8 +183,13 @@ const TransferPage = () => {
                 />
               </div>
               <div className='flex justify-between items-center border-t border-gray-300 pt-2 mt-2'>
-                <span className='text-xs text-gray-400'>Balance</span>
-                <span className='text-xs text-blue-600 font-semibold'>
+                <span className='text-xs text-gray-400' id='balance-title'>
+                  Balance
+                </span>
+                <span
+                  className='text-xs text-blue-600 font-semibold'
+                  id='balance'
+                >
                   {toRupiah(accountData?.[0]?.balance ?? 0)}
                 </span>
               </div>
@@ -173,8 +197,14 @@ const TransferPage = () => {
 
             {/* Notes */}
             <div className='bg-[#f9f9f9] rounded-xl p-4 mb-6 dark:bg-[#272727] dark:text-white'>
-              <label className='text-gray-400 text-sm mb-1 block'>Notes</label>
+              <label
+                className='text-gray-400 text-sm mb-1 block'
+                id='notes-title'
+              >
+                Notes
+              </label>
               <input
+                id='notes'
                 type='text'
                 className='w-full bg-transparent border-b border-gray-300 focus:outline-none text-sm text-black'
                 placeholder='Write a note...'
@@ -184,10 +214,15 @@ const TransferPage = () => {
 
             {/* Button */}
             <button
-              className='w-full py-3 bg-[#0057FF] text-white font-semibold rounded-lg shadow-md'
+              id='transfer-button'
+              className={`w-full py-3 text-white font-semibold rounded-lg shadow-md ${
+                !loading
+                  ? 'bg-[#0057FF] hover:bg-blue-700 cursor-pointer'
+                  : 'bg-gray-400 cursor-not-allowed opacity-60'
+              }`}
               onClick={() => onTransactionRequest()}
             >
-              Transfer
+              {loading ? '...loading' : 'Transfer'}
             </button>
           </div>
         </div>
@@ -196,14 +231,20 @@ const TransferPage = () => {
       <div className='hidden lg:block'>
         <div className='flex flex-col justify-center items-center min-h-[90vh] px-4  bg-[#f9f9f9] text-black dark:bg-black dark:text-white'>
           <div className='w-full max-w-md p-6'>
-            <h2 className='text-lg font-bold mb-4 ml-2'>Transfer</h2>
+            <h2 className='text-lg font-bold mb-4 ml-2' id='transfer-title'>
+              Transfer
+            </h2>
             <div className='bg-white w-full max-w-md p-6 rounded-2xl shadow text-left dark:bg-[#272727] dark:text-white'>
               {/* Dropdown Select */}
               <div className='flex items-center justify-between bg-gray-100 rounded-[10px] shadow-sm mb-4 dark:bg-black dark:text-white'>
-                <span className='bg-gray-300 px-4 py-3 rounded-[20px] font-bold text-sm'>
+                <span
+                  className='bg-gray-300 px-4 py-3 rounded-[20px] font-bold text-sm'
+                  id='to-title'
+                >
                   To
                 </span>
                 <select
+                  id='to-account'
                   className='bg-transparent text-sm text-800 focus:outline-none flex-1 ml-3 mr-3'
                   value={selectedReceiver}
                   onChange={handleSelectChange}
@@ -222,6 +263,7 @@ const TransferPage = () => {
                 <div className='flex items-end gap-2 mt-1'>
                   <span className='text-sm font-semibold'>IDR</span>
                   <input
+                    id='amount'
                     type='number'
                     placeholder='10.000'
                     value={amount}
@@ -231,19 +273,23 @@ const TransferPage = () => {
                 </div>
                 <hr className='border-black mt-2' />
               </div>
-              <p className='text-sm text-gray-500 mb-4'>
+              <p className='text-sm text-gray-500 mb-4' id='balance-title'>
                 Balance:{' '}
-                <span className='text-teal-600 font-medium'>
+                <span className='text-teal-600 font-medium' id='balance'>
                   {toRupiah(accountData?.[0]?.balance ?? 0)}
                 </span>
               </p>
 
               {/* Notes Input */}
               <div className='bg-gray-100 p-3 rounded-xl mb-6 dark:bg-black dark:text-white'>
-                <label className='text-sm font-semibold text-700 mb-1 block'>
+                <label
+                  className='text-sm font-semibold text-700 mb-1 block'
+                  id='notes-title'
+                >
                   Notes:
                 </label>
                 <input
+                  id='notes'
                   type='text'
                   placeholder='Write a note...'
                   className='w-full bg-transparent focus:outline-none text-sm'
@@ -253,7 +299,12 @@ const TransferPage = () => {
 
               {/* Button */}
               <button
-                className='w-full py-3 bg-blue-600 hover:bg-blue-700 text-white text-lg font-semibold rounded-xl shadow-md transition'
+                id='transfer-button'
+                className={`w-full py-3 text-white text-lg font-semibold rounded-xl shadow-md transition ${
+                  !loading
+                    ? 'bg-[#0057FF] hover:bg-blue-700 cursor-pointer'
+                    : 'bg-gray-400 cursor-not-allowed opacity-60'
+                }`}
                 onClick={() => onTransactionRequest()}
               >
                 Transfer

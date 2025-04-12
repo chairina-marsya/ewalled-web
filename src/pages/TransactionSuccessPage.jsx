@@ -33,15 +33,15 @@ export default function TransactionSuccessCard() {
           axios
             .get(url, { headers })
             .then((response) => {
-              setDataTrans(response.data)
+              setDataTrans(response.data.data)
             })
             .catch((error) => {
-              const inline = Object.values(error.response.data).join(', ')
+              const inline = error.response.data.message
               console.error('Error:', error)
               showAlert(`Oop! ${inline}`, 'OK', null)
             })
         } catch (error) {
-          const inline = Object.values(error.response.data).join(', ')
+          const inline = error.response.data.message
           console.error('Error:', error)
           showAlert(`Oop! ${inline}`, 'OK', null)
         }
@@ -271,7 +271,7 @@ export default function TransactionSuccessCard() {
           <div className='flex space-x-4'>
             <button
               id='download-button'
-              className='bg-[#0061FF1A] text-white p-2 rounded-full'
+              className='bg-[#0061FF1A] text-white p-2 rounded-full cursor-pointer'
               onClick={() => onDownloadReceipt()}
             >
               <Download size={20} />
@@ -279,7 +279,7 @@ export default function TransactionSuccessCard() {
           </div>
           <button
             id='done-button'
-            className='bg-[#0061FF] text-white px-30 py-2 rounded-md font-semibold'
+            className='bg-[#0061FF] text-white px-30 py-2 rounded-md font-semibold cursor-pointer'
             onClick={() => navigate('/')}
           >
             Done
