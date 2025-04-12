@@ -16,7 +16,7 @@ const TopUpPage = () => {
     dummyReceivers[0].name
   )
   const [amount, setAmount] = useState(null)
-  const [description, setDescription] = useState(null)
+  const [description, setDescription] = useState('')
   const [loading, setLoading] = useState(false)
   const { wallet } = useWalletStore()
   const navigate = useNavigate()
@@ -40,7 +40,8 @@ const TopUpPage = () => {
     setLoading(true)
 
     const token = localStorage.getItem('token')
-    const url = 'http://localhost:8080/api/transactions'
+    const url =
+      'https://kel-1-rakamin-walled-server.onrender.com/api/transactions'
 
     const data = {
       walletId: wallet.id,
@@ -252,7 +253,7 @@ const TopUpPage = () => {
                     : 'bg-gray-400 cursor-not-allowed opacity-60'
                 }`}
                 onClick={() => onTransactionRequest()}
-                disabled={true}
+                disabled={loading}
               >
                 {!loading ? 'Top Up' : '...loading'}
               </button>

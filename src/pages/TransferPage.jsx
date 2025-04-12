@@ -10,7 +10,7 @@ const TransferPage = () => {
   const [accountData, setAccountData] = useState([])
   const [receiverAcc, setReceiverAcc] = useState([])
   const [amount, setAmount] = useState(null)
-  const [description, setDescription] = useState(null)
+  const [description, setDescription] = useState('')
   const [loading, setLoading] = useState(false)
   const { wallet } = useWalletStore()
 
@@ -27,7 +27,7 @@ const TransferPage = () => {
 
     try {
       axios
-        .get('http://localhost:8080/api/wallets', {
+        .get('https://kel-1-rakamin-walled-server.onrender.com/api/wallets', {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -78,7 +78,8 @@ const TransferPage = () => {
   const onTransactionRequest = () => {
     setLoading(true)
     const token = localStorage.getItem('token')
-    const url = 'http://localhost:8080/api/transactions'
+    const url =
+      'https://kel-1-rakamin-walled-server.onrender.com/api/transactions'
 
     const data = {
       walletId: wallet.id,

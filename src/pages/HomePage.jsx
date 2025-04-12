@@ -60,7 +60,7 @@ const HomePage = () => {
       const fetchUserData = async () => {
         try {
           const responseUser = await axios.get(
-            'http://localhost:8080/api/users/me',
+            'https://kel-1-rakamin-walled-server.onrender.com/api/users/me',
             {
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -73,7 +73,7 @@ const HomePage = () => {
 
           try {
             const responseWalletByUser = await axios.get(
-              `http://localhost:8080/api/wallets/user/${dataUser.id}`,
+              `https://kel-1-rakamin-walled-server.onrender.com/api/wallets/user/${dataUser.id}`,
               {
                 headers: {
                   Authorization: `Bearer ${token}`,
@@ -85,7 +85,7 @@ const HomePage = () => {
             if (dataWallet && !dataWallet.length > 0) {
               try {
                 const responseCreateWallet = await axios.post(
-                  `http://localhost:8080/api/wallets/${dataUser.id}`,
+                  `https://kel-1-rakamin-walled-server.onrender.com/api/wallets/${dataUser.id}`,
                   {
                     email: dataUser.email,
                   },
@@ -133,7 +133,8 @@ const HomePage = () => {
 
   const getTransactionHistory = (id) => {
     const token = localStorage.getItem('token')
-    const url = 'http://localhost:8080/api/transactions/filter'
+    const url =
+      'https://kel-1-rakamin-walled-server.onrender.com/api/transactions/filter'
 
     const params = {
       walletId: id,

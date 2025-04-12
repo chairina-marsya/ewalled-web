@@ -17,7 +17,7 @@ const LoginPage = () => {
     const loginUser = async () => {
       try {
         const response = await axios.post(
-          'http://localhost:8080/api/auth/login',
+          'https://kel-1-rakamin-walled-server.onrender.com/api/auth/login',
           {
             email: email,
             password: password,
