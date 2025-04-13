@@ -17,7 +17,7 @@ const Navbar = ({ onLogout }) => {
       <div className='flex items-center gap-3 lg:hidden'>
         <img
           id='avatar-account'
-          src={user?.avatarUrl ?? '/asset/avatar.svg'}
+          src={user?.avatarUrl || '/asset/avatar.svg'}
           alt='Profile'
           className='w-10 h-10 rounded-full object-cover'
         />
@@ -53,12 +53,7 @@ const Navbar = ({ onLogout }) => {
         <a id='topup-link' href='/top-up' className='nav-link'>
           Top Up
         </a>
-        <a
-          id='signout-link'
-          href='/login'
-          onClick={onLogout}
-          className='nav-link'
-        >
+        <a id='signout-link' onClick={onLogout} className='nav-link'>
           Sign Out
         </a>
         <p>|</p>
@@ -106,12 +101,7 @@ const Navbar = ({ onLogout }) => {
           <a id='topup-link' href='/top-up' className='nav-link'>
             Top Up
           </a>
-          <a
-            id='signout-link'
-            href='/login'
-            onClick={onLogout}
-            className='nav-link'
-          >
+          <a id='signout-link' onClick={onLogout} className='nav-link'>
             Sign Out
           </a>
         </div>

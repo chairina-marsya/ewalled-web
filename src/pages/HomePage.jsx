@@ -362,7 +362,7 @@ const HomePage = () => {
               <div className='w-12 h-12 border-5 border-blue-600 rounded-full overflow-hidden'>
                 <img
                   id='account-avatar'
-                  src={user.avatarUrl || '/asset/avatar.svg'}
+                  src={user?.avatarUrl || '/asset/avatar.svg'}
                   alt='Profile'
                   className='object-cover w-full h-full'
                 />

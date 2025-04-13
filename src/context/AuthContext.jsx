@@ -9,12 +9,6 @@ export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const navigate = useNavigate()
 
-  const logout = () => {
-    localStorage.removeItem('token')
-    setIsAuthenticated(false)
-    navigate('/login')
-  }
-
   const login = async (email, password, showAlert) => {
     try {
       const response = await axios.post(
@@ -81,6 +75,26 @@ export const AuthProvider = ({ children }) => {
         success: false,
         message: error.response?.data?.message || error.message,
       }
+    }
+  }
+
+  const logout = async () => {
+    const token = localStorage.getItem('token')
+    try {
+      await axios.post(
+        `${BASE_URL}/api/auth/logout`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      )
+    } catch (error) {
+      console.error('Logout error:', error)
+    } finally {
+      localStorage.clear()
+      window.location.href = '/login'
     }
   }
 
