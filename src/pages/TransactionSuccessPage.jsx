@@ -71,15 +71,21 @@ export default function TransactionSuccessCard() {
     }
 
     axios
-      .get(url, { headers })
+      .get(url, {
+        headers,
+        responseType: 'blob', // ✅ this is the crucial part
+      })
       .then((response) => {
-        // Handle file download (e.g., in browser)
-        const url = window.URL.createObjectURL(new Blob([response.data]))
+        const blob = new Blob([response.data], { type: 'application/pdf' }) // ✅ set correct type
+        const url = window.URL.createObjectURL(blob)
         const link = document.createElement('a')
         link.href = url
-        link.setAttribute('download', `transactions-${dataTrans.id}.pdf`) // change filename if needed
+        link.setAttribute('download', `transactions-${dataTrans.id}.pdf`)
         document.body.appendChild(link)
         link.click()
+        link.remove() // 🧼 clean up
+        setTimeout(() => window.URL.revokeObjectURL(url), 100) // optional cleanup
+
         showAlert('Downloaded', 'OK', null)
       })
       .catch((error) => {
