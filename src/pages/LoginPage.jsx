@@ -1,4 +1,5 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import LoginBox from '../components/organisms/LoginBox'
 import { showAlert } from '../components/organisms/ShowAlert'
 import { useAuth } from '../context/AuthContext'
@@ -8,6 +9,16 @@ const LoginPage = () => {
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const { login } = useAuth()
+
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    const token = localStorage.getItem('token')
+    console.log('token', token)
+    if (token) {
+      navigate('/') // Redirect to dashboard if token is valid
+    }
+  }, [])
 
   const handleLogin = async (e) => {
     e.preventDefault()

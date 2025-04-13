@@ -1,9 +1,9 @@
-import { createContext, useContext, useState } from 'react'
+import { createContext, useContext, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import { BASE_URL } from '../utils/general'
 
-const AuthContext = createContext()
+export const AuthContext = createContext()
 
 export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
