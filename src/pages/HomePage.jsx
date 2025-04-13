@@ -69,9 +69,7 @@ const HomePage = () => {
 
         setTransactions(transactions.content)
         setTotalPages(transactions.totalPages)
-        // setPaginatedTransactions(
-        //   transactions.slice((page - 1) * itemsPerPage, page * itemsPerPage)
-        // )
+        setPaginatedTransactions(transactions.content)
       } catch (error) {
         const msg = error.response?.data?.message || 'Something went wrong'
         showAlert(`Oop! ${msg}`, 'OK', () => navigate('/login'))
@@ -99,6 +97,7 @@ const HomePage = () => {
         })
 
         setTransactions(transactions.content)
+        setPaginatedTransactions(transactions.content)
         setTotalPages(transactions.totalPages)
         // setPaginatedTransactions(
         //   transactions.slice((page - 1) * itemsPerPage, page * itemsPerPage)
@@ -111,6 +110,22 @@ const HomePage = () => {
 
     getTransactions()
   }, [wallet, sortBy, order, time, type, page])
+
+  useEffect(() => {
+    const lowercased = search.toLowerCase()
+    const filtered = transactions?.filter(
+      (t) =>
+        t.option?.toLowerCase().includes(lowercased) ||
+        t.receiverFullname?.toLowerCase().includes(lowercased) ||
+        t.transactionType?.toLowerCase().includes(lowercased) ||
+        moment(t.transactionDate)
+          .format('D MMMM YYYY HH:mm')
+          .toLowerCase()
+          .includes(lowercased) ||
+        toRupiah(t.amount).toLowerCase().includes(lowercased)
+    )
+    setPaginatedTransactions(filtered)
+  }, [search])
 
   const handleConfirmLogout = () => {
     navigate('/login')
@@ -221,7 +236,7 @@ const HomePage = () => {
             </p>
             <hr className='border-t border-gray-300 dark:border-white my-4' />
             <div className='space-y-4'>
-              {transactions.map((t, index) => (
+              {paginatedTransactions.map((t, index) => (
                 <div
                   id={`table-data-${index}`}
                   key={index}
@@ -590,7 +605,7 @@ const HomePage = () => {
                 </tr>
               </thead>
               <tbody>
-                {transactions.map((t, index) => (
+                {paginatedTransactions.map((t, index) => (
                   <tr
                     id={`data-table-${index}`}
                     key={index}
