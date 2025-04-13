@@ -12,28 +12,14 @@ import { useNavigate } from 'react-router-dom'
 import { useWalletStore } from '../../store/walletStore'
 import axios from 'axios'
 import { showAlert } from '../components/organisms/ShowAlert'
+import { toRupiah } from '../utils/functions'
+import {
+  getTransactionGraph,
+  getWalletSummary,
+} from '../services/summaryService'
 
 // Register Chart.js components
 ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend)
-
-const dummyLabels = ['Jan', 'Feb', 'Mar', 'Apr', 'May']
-const dummyData = {
-  labels: dummyLabels,
-  datasets: [
-    {
-      label: 'Income',
-      data: [4000, 3000, 2000, 2780, 1890],
-      backgroundColor: '#0061FF', // Tailwind green-400
-      borderRadius: 7,
-    },
-    {
-      label: 'Outcame',
-      data: [2400, 1398, 9800, 3908, 4800],
-      backgroundColor: '#D4D4D4', // Tailwind red-400
-      borderRadius: 7,
-    },
-  ],
-}
 
 const chartOptions = {
   responsive: true,
@@ -57,107 +43,63 @@ export default function SummaryPage() {
   const [data, setData] = useState([])
 
   useEffect(() => {
-    const token = localStorage.getItem('token')
-    if (!token || token === null || token === undefined) {
-      showAlert(
-        `Sesi anda habis. Silahkan login kembali.`,
-        'OK',
-        handleConfirmLogout
-      )
-    } else {
-      getWalletSummary()
-      getTransactionGraph()
-    }
+    fetchWalletSummary()
+    fetchTransactionGraph()
   }, [])
 
   useEffect(() => {
-    getTransactionGraph()
+    fetchTransactionGraph()
   }, [filter, month])
 
-  const handleConfirmLogout = () => {
-    navigate('/login')
-  }
-
-  const toRupiah = (number) => {
-    return new Intl.NumberFormat('id-ID', {
-      style: 'currency',
-      currency: 'IDR',
-      minimumFractionDigits: 0,
-    }).format(number)
-  }
-
-  const getWalletSummary = () => {
+  const fetchWalletSummary = async () => {
     const token = localStorage.getItem('token')
-    const url = `https://kel-1-rakamin-walled-server.onrender.com/api/transactions/summary/${wallet.id}`
-
-    const headers = {
-      Authorization: `Bearer ${token}`,
+    try {
+      const data = await getWalletSummary(wallet.id, token)
+      setTotalBalance(data.balance)
+      setTotalIncome(data.totalIncome)
+      setTotalOutcome(data.totalOutcome)
+    } catch (error) {
+      showAlert(`Oop! ${error.message}`, 'OK', null)
     }
-
-    axios
-      .get(url, {
-        headers: headers,
-      })
-      .then((response) => {
-        const { data } = response.data
-        setTotalBalance(data.balance)
-        setTotalIncome(data.totalIncome)
-        setTotalOutcome(data.totalOutcome)
-      })
-      .catch((error) => {
-        showAlert(`Oop! ${error.message}`, 'OK', null)
-      })
   }
 
-  const getTransactionGraph = (id) => {
+  const fetchTransactionGraph = async () => {
     const token = localStorage.getItem('token')
-    const url =
-      'https://kel-1-rakamin-walled-server.onrender.com/api/transactions/graph'
+    try {
+      const data = await getTransactionGraph({
+        view: filter,
+        month,
+        year,
+        walletId: wallet.id,
+        token,
+      })
 
-    const headers = {
-      Authorization: `Bearer ${token}`,
-      'Content-Type': 'application/json',
+      const labelsMap = data.data.map((item) => item.label)
+      const incomeMap = data.data.map((item) => item.income)
+      const outcomeMap = data.data.map((item) => item.outcome)
+
+      const graphData = {
+        labels: labelsMap,
+        datasets: [
+          {
+            label: 'Income',
+            data: incomeMap,
+            backgroundColor: '#0061FF',
+            borderRadius: 7,
+          },
+          {
+            label: 'Outcame',
+            data: outcomeMap,
+            backgroundColor: '#D4D4D4',
+            borderRadius: 7,
+          },
+        ],
+      }
+
+      setData(graphData)
+    } catch (error) {
+      showAlert(`Oop! ${error.message}`, 'OK', null)
     }
-
-    const data = {
-      view: filter,
-      month: filter === 'weekly' ? month : null,
-      year: year,
-      walletId: wallet.id,
-    }
-
-    axios
-      .post(url, data, {
-        headers: headers,
-      })
-      .then((response) => {
-        const { data } = response.data
-        const labelsMap = data.data.map((item) => item.label)
-        const incomeMap = data.data.map((item) => item.income)
-        const outcomeMap = data.data.map((item) => item.outcome)
-        console.log(labelsMap, incomeMap, outcomeMap)
-        const graphData = {
-          labels: labelsMap,
-          datasets: [
-            {
-              label: 'Income',
-              data: incomeMap,
-              backgroundColor: '#0061FF',
-              borderRadius: 7,
-            },
-            {
-              label: 'Outcame',
-              data: outcomeMap,
-              backgroundColor: '#D4D4D4',
-              borderRadius: 7,
-            },
-          ],
-        }
-        setData(graphData)
-      })
-      .catch((error) => {
-        showAlert(`Oop! ${error.message}`, 'OK', null)
-      })
   }
 
   return (

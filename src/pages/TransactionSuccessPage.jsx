@@ -1,9 +1,13 @@
 import { useEffect, useState } from 'react'
-import axios from 'axios'
 import { ChevronDown, ChevronUp, Share2, Download } from 'lucide-react'
 import { useNavigate, useLocation } from 'react-router-dom'
-import moment from 'moment'
 import { showAlert } from '../components/organisms/ShowAlert'
+import {
+  getTransactionById,
+  downloadTransactionReceipt,
+} from '../services/transactionService'
+import { toRupiah } from '../utils/functions'
+import moment from 'moment'
 
 export default function TransactionSuccessCard() {
   const [expanded, setExpanded] = useState(false)
@@ -14,84 +18,50 @@ export default function TransactionSuccessCard() {
 
   useEffect(() => {
     const token = localStorage.getItem('token')
-    if (!token || token === null || token === undefined) {
+    if (!token) {
       showAlert(
         `Sesi anda habis. Silahkan login kembali.`,
         'OK',
         handleConfirmLogout
       )
-    } else {
-      const fetchTransData = async () => {
-        try {
-          const transactionId = data.id
-          const url = `https://kel-1-rakamin-walled-server.onrender.com/api/transactions/${transactionId}`
-
-          const headers = {
-            Authorization: `Bearer ${token}`,
-          }
-
-          axios
-            .get(url, { headers })
-            .then((response) => {
-              setDataTrans(response.data.data)
-            })
-            .catch((error) => {
-              const inline = error.response.data.message
-              console.error('Error:', error)
-              showAlert(`Oop! ${inline}`, 'OK', null)
-            })
-        } catch (error) {
-          const inline = error.response.data.message
-          console.error('Error:', error)
-          showAlert(`Oop! ${inline}`, 'OK', null)
-        }
-      }
-
-      fetchTransData()
+      return
     }
-  }, [])
+
+    const fetchTransData = async () => {
+      try {
+        const transactionData = await getTransactionById(data.id, token)
+        setDataTrans(transactionData)
+      } catch (error) {
+        console.error('Error fetching transaction:', error)
+        showAlert(`Oop! ${error.message}`, 'OK', null)
+      }
+    }
+
+    fetchTransData()
+  }, [data.id])
 
   const handleConfirmLogout = () => {
     navigate('/login')
   }
 
-  const toRupiah = (number) => {
-    return new Intl.NumberFormat('id-ID', {
-      style: 'currency',
-      currency: 'IDR',
-      minimumFractionDigits: 0,
-    }).format(number)
-  }
-
-  const onDownloadReceipt = () => {
+  const onDownloadReceipt = async () => {
     const token = localStorage.getItem('token')
-    const url = `https://kel-1-rakamin-walled-server.onrender.com/api/transactions/export-pdf/${dataTrans.id}`
-    const headers = {
-      Authorization: `Bearer ${token}`,
+    try {
+      const blob = await downloadTransactionReceipt(dataTrans.id, token)
+      const url = window.URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      link.href = url
+      link.setAttribute('download', `transactions-${dataTrans.id}.pdf`)
+      document.body.appendChild(link)
+      link.click()
+      link.remove() // clean up
+      setTimeout(() => window.URL.revokeObjectURL(url), 100) // optional cleanup
+
+      showAlert('Downloaded', 'OK', null)
+    } catch (error) {
+      console.error('Error downloading receipt:', error)
+      showAlert(`Oop! ${error.message}`, 'OK', null)
     }
-
-    axios
-      .get(url, {
-        headers,
-        responseType: 'blob', // ✅ this is the crucial part
-      })
-      .then((response) => {
-        const blob = new Blob([response.data], { type: 'application/pdf' }) // ✅ set correct type
-        const url = window.URL.createObjectURL(blob)
-        const link = document.createElement('a')
-        link.href = url
-        link.setAttribute('download', `transactions-${dataTrans.id}.pdf`)
-        document.body.appendChild(link)
-        link.click()
-        link.remove() // 🧼 clean up
-        setTimeout(() => window.URL.revokeObjectURL(url), 100) // optional cleanup
-
-        showAlert('Downloaded', 'OK', null)
-      })
-      .catch((error) => {
-        console.error('Error:', error)
-        showAlert(`Oop! ${error.message}`, 'OK', null)
-      })
   }
 
   return (

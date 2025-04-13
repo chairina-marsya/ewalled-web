@@ -1,55 +1,25 @@
-import React, { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import React, { useState } from 'react'
 import LoginBox from '../components/organisms/LoginBox'
-import axios from 'axios'
 import { showAlert } from '../components/organisms/ShowAlert'
+import { useAuth } from '../context/AuthContext'
 
 const LoginPage = () => {
-  // Accept setIsAuthenticated as a prop
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
-  const navigate = useNavigate()
+  const { login } = useAuth()
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault()
+    const result = await login(email, password, showAlert)
 
-    const loginUser = async () => {
-      try {
-        const response = await axios.post(
-          'https://kel-1-rakamin-walled-server.onrender.com/api/auth/login',
-          {
-            email: email,
-            password: password,
-          },
-          {
-            headers: {
-              'Content-Type': 'application/json',
-            },
-          }
-        )
-        console.log(response.data)
-        localStorage.setItem('token', response.data.data.token)
-        showAlert(`Welcome back! ${response.data.message}`, 'OK', handleConfirm)
-        setError(null)
-      } catch (error) {
-        const inline = error.response.data.message
-        setError(inline)
-        // setError(error.message)
-      }
+    if (!result.success) {
+      setError(result.message)
     }
-
-    // Call the function
-    loginUser()
-  }
-
-  const handleConfirm = () => {
-    navigate('/')
   }
 
   return (
     <div className='min-h-screen flex'>
-      {/* Left Section - Login Form */}
       <div className='w-full md:w-1/2 flex items-center justify-center p-6 bg-white dark:bg-black dark:text-white'>
         <LoginBox
           email={email}
@@ -61,7 +31,6 @@ const LoginPage = () => {
         />
       </div>
 
-      {/* Right Section - Image */}
       <div
         className='hidden md:block w-1/2 bg-cover bg-center'
         style={{ backgroundImage: "url('/asset/loginbg.png')" }}

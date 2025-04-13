@@ -11,6 +11,7 @@ import Navbar from './components/organisms/Navbar'
 import TransactionSuccessCard from './pages/TransactionSuccessPage'
 import SummaryPage from './pages/SummayPage'
 import axios from 'axios'
+import PrivateRoute from './routes/PrivateRoute'
 
 function App() {
   const location = useLocation() // Get the current path
@@ -48,16 +49,55 @@ function App() {
 
       <Routes>
         {/* Redirect to dashboard if logged in */}
-        <Route path='/' element={<HomePage />} />
         <Route path='/login' element={<LoginPage />} />
         <Route path='/register' element={<RegisterPage />} />
-        <Route path='/nofound' element={<NoFoundPage />} />
-        <Route path='/transfer' element={<TransferPage />} />
-        <Route path='/top-up' element={<TopUpPage />} />
-        <Route path='/summary' element={<SummaryPage />} />
+        <Route
+          path='/'
+          element={
+            <PrivateRoute>
+              <HomePage />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path='/nofound'
+          element={
+            <PrivateRoute>
+              <NoFoundPage />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path='/transfer'
+          element={
+            <PrivateRoute>
+              <TransferPage />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path='/top-up'
+          element={
+            <PrivateRoute>
+              <TopUpPage />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path='/summary'
+          element={
+            <PrivateRoute>
+              <SummaryPage />
+            </PrivateRoute>
+          }
+        />
         <Route
           path='/transaction-success'
-          element={<TransactionSuccessCard />}
+          element={
+            <PrivateRoute>
+              <TransactionSuccessCard />
+            </PrivateRoute>
+          }
         />
       </Routes>
     </div>

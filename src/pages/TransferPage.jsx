@@ -1,8 +1,10 @@
-import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useWalletStore } from '../../store/walletStore'
 import { showAlert } from '../components/organisms/ShowAlert'
+import { toRupiah } from '../utils/functions'
+import { fetchWallets } from '../services/walletService'
+import { createTransferTransaction } from '../services/transactionService'
 
 const TransferPage = () => {
   const navigate = useNavigate()
@@ -16,101 +18,52 @@ const TransferPage = () => {
 
   useEffect(() => {
     setLoading(true)
-    const token = localStorage.getItem('token')
-    if (!token || token === null || token === undefined) {
-      showAlert(
-        `Sesi anda habis. Silahkan login kembali.`,
-        'OK',
-        handleConfirmLogout
-      )
-    }
-
-    try {
-      axios
-        .get('https://kel-1-rakamin-walled-server.onrender.com/api/wallets', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        })
-        .then((response) => {
-          setLoading(false)
-          const { data } = response.data
-          console.log(data)
-          setAccountData(filteredWallets(data).currAcct)
-          setReceiverAcc(filteredWallets(data).otherAcct)
-          setSelectedReceiver(filteredWallets(data).otherAcct[0])
-        })
-        .catch((error) => {
-          setLoading(false)
-          console.error('Error fetching wallets:', error)
-        })
-    } catch (error) {
-      const inline = error.response.data.message
-      console.error('Error fetching wallet:', error)
-      showAlert(`Oop! ${inline}`, 'OK', null)
-    }
+    fetchWallets()
+      .then((data) => {
+        const filtered = filteredWallets(data)
+        setAccountData(filtered.currAcct)
+        setReceiverAcc(filtered.otherAcct)
+        setSelectedReceiver(filtered.otherAcct[0])
+      })
+      .catch((error) => {
+        const inline =
+          error?.response?.data?.message || 'Failed to get wallet data.'
+        console.error('Error fetching wallets:', error)
+        showAlert(`Oops! ${inline}`, 'OK')
+      })
+      .finally(() => setLoading(false))
   }, [])
 
   const filteredWallets = (data) => {
     const { id } = wallet
     const currAcct = data.filter((item) => item.id === id)
     const otherAcct = data.filter((item) => item.id !== id)
-
     return { currAcct, otherAcct }
   }
 
   const handleSelectChange = (event) => {
-    setSelectedReceiver(event.target.value)
+    setSelectedReceiver(
+      receiverAcc.find((item) => item.id === event.target.value)
+    )
   }
 
   const handleConfirmLogout = () => {
     navigate('/login')
   }
 
-  const toRupiah = (number) => {
-    return new Intl.NumberFormat('id-ID', {
-      style: 'currency',
-      currency: 'IDR',
-      minimumFractionDigits: 0,
-    }).format(number)
-  }
-
   const onTransactionRequest = () => {
     setLoading(true)
-    const token = localStorage.getItem('token')
-    const url =
-      'https://kel-1-rakamin-walled-server.onrender.com/api/transactions'
-
-    const data = {
-      walletId: wallet.id,
-      transactionType: 'TRANSFER',
-      amount: amount,
-      recipientAccountNumber: selectedReceiver.accountNumber,
-      description: description,
-      option: '',
-    }
-
-    const headers = {
-      Authorization: `Bearer ${token}`,
-      'Content-Type': 'application/json',
-    }
-
-    axios
-      .post(url, data, { headers })
-      .then((response) => {
-        setLoading(false)
-        console.log('Success:', response.data)
-        // navigate('/transaction-success')
-        navigate('/transaction-success', {
-          state: response.data.data,
-        })
+    createTransferTransaction(wallet.id, selectedReceiver, amount, description)
+      .then((data) => {
+        navigate('/transaction-success', { state: data })
       })
       .catch((error) => {
-        setLoading(false)
-        console.error('Error:', error)
-        const inline = error.response.data.message
-        showAlert(`Oops. ${inline}.`, 'OK', null)
+        const inline =
+          error?.response?.data?.message ||
+          'Unfortunately transaction is failed.'
+        showAlert(`Oops. ${inline}`, 'OK')
       })
+      .finally(() => setLoading(false))
   }
 
   return (
@@ -308,7 +261,7 @@ const TransferPage = () => {
                 }`}
                 onClick={() => onTransactionRequest()}
               >
-                Transfer
+                {loading ? '...loading' : 'Transfer'}
               </button>
             </div>
           </div>

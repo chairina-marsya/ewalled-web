@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from 'react'
-import axios from 'axios'
-import { useUserStore } from '../../store/userStore'
-import { useWalletStore } from '../../store/walletStore'
+import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useWalletStore } from '../../store/walletStore'
 import { showAlert } from '../components/organisms/ShowAlert'
+import { createTopUpTransaction } from '../services/transactionService'
 
 const dummyReceivers = [
   { id: 1, name: 'BYOND Pay' },
@@ -21,61 +20,21 @@ const TopUpPage = () => {
   const { wallet } = useWalletStore()
   const navigate = useNavigate()
 
-  useEffect(() => {
-    const token = localStorage.getItem('token')
-    if (!token || token === null || token === undefined) {
-      showAlert(
-        `Sesi anda habis. Silahkan login kembali.`,
-        'OK',
-        handleConfirmLogout
-      )
-    }
-  }, [])
-
   const handleSelectChange = (event) => {
     setSelectedReceiver(event.target.value)
   }
 
   const onTransactionRequest = () => {
     setLoading(true)
-
-    const token = localStorage.getItem('token')
-    const url =
-      'https://kel-1-rakamin-walled-server.onrender.com/api/transactions'
-
-    const data = {
-      walletId: wallet.id,
-      transactionType: 'TOP_UP',
-      amount: amount,
-      recipientAccountNumber: '',
-      description: description,
-      option: selectedReceiver,
-    }
-
-    const headers = {
-      Authorization: `Bearer ${token}`,
-      'Content-Type': 'application/json',
-    }
-
-    axios
-      .post(url, data, { headers })
-      .then((response) => {
-        setLoading(false)
-        // navigate('/transaction-success')
-        navigate('/transaction-success', {
-          state: response.data.data,
-        })
+    createTopUpTransaction(wallet.id, amount, description, selectedReceiver)
+      .then((data) => {
+        navigate('/transaction-success', { state: data })
       })
       .catch((error) => {
-        setLoading(false)
-        const inline = error.response.data.message
-        console.error('Error fetching wallet:', error)
-        showAlert(`Oop! ${inline}`, 'OK', null)
+        const inline = error?.response?.data?.message || 'Transaksi gagal.'
+        showAlert(`Oops. ${inline}`, 'OK')
       })
-  }
-
-  const handleConfirmLogout = () => {
-    navigate('/login')
+      .finally(() => setLoading(false))
   }
 
   return (

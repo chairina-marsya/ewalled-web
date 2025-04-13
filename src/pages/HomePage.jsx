@@ -3,30 +3,19 @@ import { ChevronLeft, ChevronRight, Search } from 'lucide-react'
 import { useTheme } from '../context/ThemeContext'
 import { useNavigate } from 'react-router-dom'
 import { showAlert } from '../components/organisms/ShowAlert'
-import axios from 'axios'
 import { useUserStore } from '../../store/userStore'
 import { useWalletStore } from '../../store/walletStore'
 import moment from 'moment'
 import LinkText from '../components/atoms/LinkText'
+import { getTimeGreeting, toRupiah } from '../utils/functions'
+import {
+  createWallet,
+  fetchTransactionHistory,
+  fetchUserData,
+  fetchWalletByUser,
+} from '../services/dashboardService'
 
 const isPositive = (type) => type === 'TOP_UP'
-
-// const transactions = [
-//   {
-//     date: '20:10 - 30 June 2022',
-//     type: 'Transfer',
-//     from: 'Sendy',
-//     description: 'Fore Coffee',
-//     amount: -75000,
-//   },
-//   {
-//     date: '20:10 - 30 June 2022',
-//     type: 'Topup',
-//     from: '',
-//     description: 'Topup from Bank Transfer',
-//     amount: 1000000,
-//   },
-// ]
 
 const HomePage = () => {
   const { isDark } = useTheme()
@@ -47,184 +36,81 @@ const HomePage = () => {
   const { wallet, setWallet } = useWalletStore()
 
   useEffect(() => {
-    const token = localStorage.getItem('token')
-    if (!token || token === null || token === undefined) {
-      showAlert(
-        `Sesi anda habis. Silahkan login kembali.`,
-        'OK',
-        handleConfirmLogout
-      )
-    } else {
+    const init = async () => {
+      const token = localStorage.getItem('token')
+      if (!token) return
+
       setGreeting(getTimeGreeting())
+      try {
+        const userData = await fetchUserData(token)
+        setUser(userData)
 
-      const fetchUserData = async () => {
-        try {
-          const responseUser = await axios.get(
-            'https://kel-1-rakamin-walled-server.onrender.com/api/users/me',
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            }
-          )
+        const wallets = await fetchWalletByUser(userData.id, token)
 
-          const dataUser = responseUser.data.data
-          setUser(dataUser)
-
-          try {
-            const responseWalletByUser = await axios.get(
-              `https://kel-1-rakamin-walled-server.onrender.com/api/wallets/user/${dataUser.id}`,
-              {
-                headers: {
-                  Authorization: `Bearer ${token}`,
-                },
-              }
-            )
-
-            const dataWallet = responseWalletByUser.data.data
-            if (dataWallet && !dataWallet.length > 0) {
-              try {
-                const responseCreateWallet = await axios.post(
-                  `https://kel-1-rakamin-walled-server.onrender.com/api/wallets/${dataUser.id}`,
-                  {
-                    email: dataUser.email,
-                  },
-                  {
-                    headers: {
-                      'Content-Type': 'application/json',
-                      Authorization: `Bearer ${token}`,
-                    },
-                  }
-                )
-
-                const dataCreateWallet = responseCreateWallet.data.data
-                setWallet(dataCreateWallet)
-                getTransactionHistory(dataCreateWallet.id)
-              } catch (error) {
-                const inline = error.response.data.message
-                console.error('Error fetching wallet:', error)
-                showAlert(`Oop! ${inline}`, 'OK', null)
-              }
-            } else if (dataWallet.length > 0) {
-              setWallet(dataWallet[0])
-              getTransactionHistory(dataWallet[0].id)
-            }
-          } catch (error) {
-            const inline = error.response.data.message
-            console.error('Error fetching user data:', error.message)
-            showAlert(`Oop! ${inline}`, 'OK', handleConfirmLogout)
-          }
-        } catch (error) {
-          const inline = error.response.data.message
-          console.error('Error fetching user data:', error.message)
-          showAlert(`Oop! ${inline}`, 'OK', null)
+        let currentWallet
+        if (wallets.length === 0) {
+          currentWallet = await createWallet(userData.id, userData.email, token)
+        } else {
+          currentWallet = wallets[0]
         }
-      }
 
-      fetchUserData()
+        setWallet(currentWallet)
+
+        const transactions = await fetchTransactionHistory({
+          walletId: currentWallet.id,
+          type,
+          time,
+          sortBy,
+          order,
+          token,
+          page: page - 1,
+          size: itemsPerPage,
+        })
+
+        setTransactions(transactions.content)
+        setTotalPages(transactions.totalPages)
+        // setPaginatedTransactions(
+        //   transactions.slice((page - 1) * itemsPerPage, page * itemsPerPage)
+        // )
+      } catch (error) {
+        const msg = error.response?.data?.message || 'Something went wrong'
+        showAlert(`Oop! ${msg}`, 'OK', () => navigate('/login'))
+      }
     }
+
+    init()
   }, [])
 
   useEffect(() => {
-    if (wallet) {
-      getTransactionHistory(wallet.id)
-    }
-  }, [sortBy, order, time, type])
+    const getTransactions = async () => {
+      if (!wallet) return
 
-  const getTransactionHistory = (id) => {
-    const token = localStorage.getItem('token')
-    const url =
-      'https://kel-1-rakamin-walled-server.onrender.com/api/transactions/filter'
+      const token = localStorage.getItem('token')
+      try {
+        const transactions = await fetchTransactionHistory({
+          walletId: wallet.id,
+          type,
+          time,
+          sortBy,
+          order,
+          token,
+          page: page - 1,
+          size: itemsPerPage,
+        })
 
-    const params = {
-      walletId: id,
-      type: type,
-      timeRange: time,
-      startDate: getDateRange(time).startDate,
-      endDate: getDateRange(time).endDate,
-      sortBy: sortBy,
-      order: order,
-    }
-
-    const headers = {
-      Authorization: `Bearer ${token}`,
-    }
-
-    axios
-      .get(url, { params, headers })
-      .then((response) => {
-        const dataTransaction = response.data.data.content
-        setTransactions(dataTransaction)
-        setTotalPages(Math.ceil(dataTransaction.length / itemsPerPage))
-        setPaginatedTransactions(
-          dataTransaction.slice((page - 1) * itemsPerPage, page * itemsPerPage)
-        )
-      })
-      .catch((error) => {
-        const inline = error.response.data.message
-        console.error('Error:', error)
-        showAlert(`Oop! ${inline}`, 'OK', null)
-      })
-  }
-
-  const getTimeGreeting = () => {
-    const hour = new Date().getHours()
-
-    if (hour >= 5 && hour < 12) {
-      return 'Morning'
-    } else if (hour >= 12 && hour < 17) {
-      return 'Afternoon'
-    } else {
-      return 'Night'
-    }
-  }
-
-  const toRupiah = (number) => {
-    return new Intl.NumberFormat('id-ID', {
-      style: 'currency',
-      currency: 'IDR',
-      minimumFractionDigits: 0,
-    }).format(number)
-  }
-
-  const getDateRange = (type) => {
-    let startDate, endDate
-
-    switch (type) {
-      case 'ALL_TIME':
-        startDate = moment('2024-12-01T00:00:00')
-        endDate = moment('2025-12-01T00:00:00')
-        break
-
-      case 'TODAY':
-        startDate = moment().startOf('day')
-        endDate = moment().endOf('day')
-        break
-
-      case 'YESTERDAY':
-        startDate = moment().subtract(1, 'day').startOf('day')
-        endDate = moment().subtract(1, 'day').endOf('day')
-        break
-
-      case 'THIS_WEEK':
-        startDate = moment().startOf('week') // default start is Sunday
-        endDate = moment().endOf('week')
-        break
-
-      case 'THIS_MONTH':
-        startDate = moment().startOf('month')
-        endDate = moment().endOf('month')
-        break
-
-      default:
-        throw new Error(`Unknown date range type: ${type}`)
+        setTransactions(transactions.content)
+        setTotalPages(transactions.totalPages)
+        // setPaginatedTransactions(
+        //   transactions.slice((page - 1) * itemsPerPage, page * itemsPerPage)
+        // )
+      } catch (error) {
+        const msg = error.response?.data?.message || 'Something went wrong'
+        showAlert(`Oop! ${msg}`, 'OK', null)
+      }
     }
 
-    return {
-      startDate: startDate.toISOString(),
-      endDate: endDate.toISOString(),
-    }
-  }
+    getTransactions()
+  }, [wallet, sortBy, order, time, type, page])
 
   const handleConfirmLogout = () => {
     navigate('/login')
@@ -348,7 +234,7 @@ const HomePage = () => {
                       className='text-sm font-medium'
                       id={`table-data-walledid-${index}`}
                     >
-                      {t.option || t.recipientWalletId || ''}
+                      {t.option || t.receiverFullname || ''}
                     </p>
                     <p
                       className='text-sm text-gray-500'
@@ -376,6 +262,76 @@ const HomePage = () => {
                   </p>
                 </div>
               ))}
+            </div>
+
+            <div
+              id='pagination'
+              className='flex items-center mt-4 w-fit rounded-md'
+            >
+              <button
+                id='pagination-first'
+                onClick={() => setPage(1)}
+                disabled={page === 1}
+                className={`px-3 py-2 font-bold h-[42px] rounded-md transition-colors ${
+                  page === 1
+                    ? 'text-gray-400 cursor-not-allowed'
+                    : 'text-blue-600 hover:bg-gray-200'
+                }`}
+              >
+                First
+              </button>
+              <button
+                id='pagination-page'
+                onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
+                disabled={page === 1}
+                className={`px-3 py-2 font-bold h-[42px] rounded-md transition-colors ${
+                  page === 1
+                    ? 'text-gray-400 cursor-not-allowed'
+                    : 'text-blue-600 hover:bg-gray-200'
+                }`}
+              >
+                <ChevronLeft size={16} />
+              </button>
+              {[...Array(totalPages)].map((_, i) => (
+                <button
+                  id={`pagination-${i}`}
+                  key={i}
+                  onClick={() => setPage(i + 1)}
+                  className={`px-3 py-2 font-bold h-[42px] rounded-md transition-colors ${
+                    page === i + 1
+                      ? 'bg-blue-600 text-white'
+                      : 'text-blue-600 hover:bg-gray-200'
+                  }`}
+                >
+                  {i + 1}
+                </button>
+              ))}
+              <button
+                id='pagination-total'
+                onClick={() =>
+                  setPage((prev) => Math.min(prev + 1, totalPages))
+                }
+                disabled={page === totalPages}
+                className={`px-3 py-2 font-bold h-[42px] rounded-md transition-colors ${
+                  page === totalPages
+                    ? 'text-gray-400 cursor-not-allowed'
+                    : 'text-blue-600 hover:bg-gray-200'
+                }`}
+              >
+                <ChevronRight size={16} />
+              </button>
+              <button
+                id='pagination-next'
+                onClick={() => setPage(totalPages)}
+                disabled={page === totalPages}
+                className={`px-3 py-2 font-bold h-[42px] rounded-md transition-colors ${
+                  page === totalPages
+                    ? 'text-gray-400 cursor-not-allowed'
+                    : 'text-blue-600 hover:bg-gray-200'
+                }`}
+              >
+                Last
+              </button>
             </div>
           </div>
         </div>
@@ -406,7 +362,7 @@ const HomePage = () => {
               <div className='w-12 h-12 border-5 border-blue-600 rounded-full overflow-hidden'>
                 <img
                   id='account-avatar'
-                  src={user?.avatarUrl ?? '/asset/avatar.svg'}
+                  src={user.avatarUrl || '/asset/avatar.svg'}
                   alt='Profile'
                   className='object-cover w-full h-full'
                 />
@@ -634,7 +590,7 @@ const HomePage = () => {
                 </tr>
               </thead>
               <tbody>
-                {paginatedTransactions.map((t, index) => (
+                {transactions.map((t, index) => (
                   <tr
                     id={`data-table-${index}`}
                     key={index}
@@ -650,7 +606,7 @@ const HomePage = () => {
                       className='px-4 py-2'
                       id={`table-data-walledid-${index}`}
                     >
-                      {t.option || t.recipientWalletId || ''}
+                      {t.option || t.receiverFullname || ''}
                     </td>
                     <td
                       className='px-4 py-2'
@@ -681,12 +637,19 @@ const HomePage = () => {
               </tbody>
             </table>
 
-            <div className='pagination' id='pagination'>
+            <div
+              id='pagination'
+              className='flex items-center mt-4 w-fit rounded-md'
+            >
               <button
                 id='pagination-first'
                 onClick={() => setPage(1)}
                 disabled={page === 1}
-                className={`pagination-button ${page === 1 ? 'disabled' : ''}`}
+                className={`px-3 py-2 font-bold h-[42px] rounded-md transition-colors ${
+                  page === 1
+                    ? 'text-gray-400 cursor-not-allowed'
+                    : 'text-blue-600 hover:bg-gray-200'
+                }`}
               >
                 First
               </button>
@@ -694,7 +657,11 @@ const HomePage = () => {
                 id='pagination-page'
                 onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
                 disabled={page === 1}
-                className={`pagination-button ${page === 1 ? 'disabled' : ''}`}
+                className={`px-3 py-2 font-bold h-[42px] rounded-md transition-colors ${
+                  page === 1
+                    ? 'text-gray-400 cursor-not-allowed'
+                    : 'text-blue-600 hover:bg-gray-200'
+                }`}
               >
                 <ChevronLeft size={16} />
               </button>
@@ -703,8 +670,10 @@ const HomePage = () => {
                   id={`pagination-${i}`}
                   key={i}
                   onClick={() => setPage(i + 1)}
-                  className={`pagination-button ${
-                    page === i + 1 ? 'active' : ''
+                  className={`px-3 py-2 font-bold h-[42px] rounded-md transition-colors ${
+                    page === i + 1
+                      ? 'bg-blue-600 text-white'
+                      : 'text-blue-600 hover:bg-gray-200'
                   }`}
                 >
                   {i + 1}
@@ -716,8 +685,10 @@ const HomePage = () => {
                   setPage((prev) => Math.min(prev + 1, totalPages))
                 }
                 disabled={page === totalPages}
-                className={`pagination-button ${
-                  page === totalPages ? 'disabled' : ''
+                className={`px-3 py-2 font-bold h-[42px] rounded-md transition-colors ${
+                  page === totalPages
+                    ? 'text-gray-400 cursor-not-allowed'
+                    : 'text-blue-600 hover:bg-gray-200'
                 }`}
               >
                 <ChevronRight size={16} />
@@ -726,11 +697,13 @@ const HomePage = () => {
                 id='pagination-next'
                 onClick={() => setPage(totalPages)}
                 disabled={page === totalPages}
-                className={`pagination-button ${
-                  page === totalPages ? 'disabled' : ''
+                className={`px-3 py-2 font-bold h-[42px] rounded-md transition-colors ${
+                  page === totalPages
+                    ? 'text-gray-400 cursor-not-allowed'
+                    : 'text-blue-600 hover:bg-gray-200'
                 }`}
               >
-                Next
+                Last
               </button>
             </div>
           </div>
