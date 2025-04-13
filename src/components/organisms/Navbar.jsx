@@ -62,7 +62,7 @@ const Navbar = ({ onLogout }) => {
             id='mode-logo'
             src={isDark ? '/asset/mode.png' : '/asset/moon.png'}
             alt='Mode'
-            className='h-5'
+            className='h-5 cursor-pointer'
           />
         </div>
       </div>
@@ -74,7 +74,7 @@ const Navbar = ({ onLogout }) => {
             id='mode-logo'
             src={isDark ? '/asset/mode.png' : '/asset/moon.png'}
             alt='Mode'
-            className='h-5'
+            className='h-5 cursor-pointer'
           />
         </div>
         <button

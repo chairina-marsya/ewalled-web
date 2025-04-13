@@ -53,7 +53,7 @@ const RegisterForm = ({
     <Input
       inputId='avatar-register'
       type='text'
-      placeholder='Avatar'
+      placeholder='Avatar (optional)'
       value={avatarUrl}
       onChange={onAvatarUrl}
     />

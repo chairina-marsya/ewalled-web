@@ -49,7 +49,7 @@ const RegisterBox = ({
       />
       <p id='have-account' className='text-center mt-4 text-sm'>
         Already have an account?{' '}
-        <LinkText linkId='login-link' text='Login di sini' href='/login' />
+        <LinkText linkId='login-link' text='Login here' href='/login' />
       </p>
     </div>
   )

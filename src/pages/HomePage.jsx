@@ -281,13 +281,13 @@ const HomePage = () => {
 
             <div
               id='pagination'
-              className='flex items-center mt-4 w-fit rounded-md'
+              className='flex items-center mt-4 w-fit rounded-md text-[12px]'
             >
               <button
                 id='pagination-first'
                 onClick={() => setPage(1)}
                 disabled={page === 1}
-                className={`px-3 py-2 font-bold h-[42px] rounded-md transition-colors ${
+                className={`px-2 py-1 font-bold h-[42px] rounded-md transition-colors ${
                   page === 1
                     ? 'text-gray-400 cursor-not-allowed'
                     : 'text-blue-600 hover:bg-gray-200'
@@ -299,7 +299,7 @@ const HomePage = () => {
                 id='pagination-page'
                 onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
                 disabled={page === 1}
-                className={`px-3 py-2 font-bold h-[42px] rounded-md transition-colors ${
+                className={`px-2 py-1 font-bold h-[42px] rounded-md transition-colors ${
                   page === 1
                     ? 'text-gray-400 cursor-not-allowed'
                     : 'text-blue-600 hover:bg-gray-200'
@@ -312,7 +312,7 @@ const HomePage = () => {
                   id={`pagination-${i}`}
                   key={i}
                   onClick={() => setPage(i + 1)}
-                  className={`px-3 py-2 font-bold h-[42px] rounded-md transition-colors ${
+                  className={`px-2 py-1 font-bold h-[42px] rounded-md transition-colors ${
                     page === i + 1
                       ? 'bg-blue-600 text-white'
                       : 'text-blue-600 hover:bg-gray-200'
@@ -327,7 +327,7 @@ const HomePage = () => {
                   setPage((prev) => Math.min(prev + 1, totalPages))
                 }
                 disabled={page === totalPages}
-                className={`px-3 py-2 font-bold h-[42px] rounded-md transition-colors ${
+                className={`px-2 py-1 font-bold h-[42px] rounded-md transition-colors ${
                   page === totalPages
                     ? 'text-gray-400 cursor-not-allowed'
                     : 'text-blue-600 hover:bg-gray-200'
@@ -339,7 +339,7 @@ const HomePage = () => {
                 id='pagination-next'
                 onClick={() => setPage(totalPages)}
                 disabled={page === totalPages}
-                className={`px-3 py-2 font-bold h-[42px] rounded-md transition-colors ${
+                className={`px-2 py-1 font-bold h-[42px] rounded-md transition-colors ${
                   page === totalPages
                     ? 'text-gray-400 cursor-not-allowed'
                     : 'text-blue-600 hover:bg-gray-200'
@@ -581,25 +581,46 @@ const HomePage = () => {
             </div>
 
             {/* Table with updated styling */}
-            <table id='transaction-table' className='table'>
+            <table
+              id='transaction-table'
+              className='w-full border border-[#EDEDED] border-collapse'
+            >
               <thead>
                 <tr>
-                  <th id='table-title-1' className='px-4 py-2 text-left'>
+                  <th
+                    id='table-title-1'
+                    className='px-4 py-2 text-left font-bold border border-[#EDEDED]'
+                  >
                     Date & Time
                   </th>
-                  <th id='table-title-2' className='px-4 py-2 text-left'>
+                  <th
+                    id='table-title-2'
+                    className='px-4 py-2 text-left font-bold border border-[#EDEDED]'
+                  >
                     Type
                   </th>
-                  <th id='table-title-3' className='px-4 py-2 text-left'>
+                  <th
+                    id='table-title-3'
+                    className='px-4 py-2 text-left font-bold border border-[#EDEDED]'
+                  >
                     From / To
                   </th>
-                  <th id='table-title-4' className='px-4 py-2 text-left'>
+                  <th
+                    id='table-title-4'
+                    className='px-4 py-2 text-left font-bold border border-[#EDEDED]'
+                  >
                     Description
                   </th>
-                  <th id='table-title-5' className='px-4 py-2 text-left'>
+                  <th
+                    id='table-title-5'
+                    className='px-4 py-2 text-left font-bold border border-[#EDEDED]'
+                  >
                     Amount
                   </th>
-                  <th id='table-title-6' className='px-4 py-2 text-left'>
+                  <th
+                    id='table-title-6'
+                    className='px-4 py-2 text-left font-bold border border-[#EDEDED]'
+                  >
                     Action
                   </th>
                 </tr>
@@ -609,28 +630,36 @@ const HomePage = () => {
                   <tr
                     id={`data-table-${index}`}
                     key={index}
-                    className={index % 2 === 0 ? 'dark:text-black' : 'unset'}
+                    className={`${index % 2 === 0 ? 'bg-[#F6F6F6]' : ''} ${
+                      index % 2 === 0 ? 'dark:text-black' : ''
+                    }`}
                   >
-                    <td className='px-4 py-2' id={`table-data-date-${index}`}>
+                    <td
+                      className='px-4 py-2 border border-[#EDEDED]'
+                      id={`table-data-date-${index}`}
+                    >
                       {moment(t.transactionDate).format('HH:mm - D MMMM YYYY')}
                     </td>
-                    <td className='px-4 py-2' id={`table-data-type-${index}`}>
+                    <td
+                      className='px-4 py-2 border border-[#EDEDED]'
+                      id={`table-data-type-${index}`}
+                    >
                       {t.transactionType === 'TOP_UP' ? 'TOP UP' : 'TRANSFER'}
                     </td>
                     <td
-                      className='px-4 py-2'
+                      className='px-4 py-2 border border-[#EDEDED]'
                       id={`table-data-walledid-${index}`}
                     >
                       {t.option || t.receiverFullname || ''}
                     </td>
                     <td
-                      className='px-4 py-2'
+                      className='px-4 py-2 border border-[#EDEDED]'
                       id={`table-data-description-${index}`}
                     >
                       {t.description || '-'}
                     </td>
                     <td
-                      className={`px-4 py-2 ${
+                      className={`px-4 py-2 border border-[#EDEDED] ${
                         isPositive(t.transactionType)
                           ? 'text-green-500'
                           : 'text-red-500'
@@ -640,7 +669,7 @@ const HomePage = () => {
                       {isPositive(t.transactionType) ? '+' : '-'}{' '}
                       {toRupiah(t.amount)}
                     </td>
-                    <td>
+                    <td className='px-4 py-2 border border-[#EDEDED]'>
                       <LinkText
                         id={`table-link-detail-${index}`}
                         text='Details'
