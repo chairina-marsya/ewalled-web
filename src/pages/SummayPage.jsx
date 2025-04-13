@@ -88,7 +88,7 @@ export default function SummaryPage() {
 
   const getWalletSummary = () => {
     const token = localStorage.getItem('token')
-    const url = `https://kel-1-rakamin-walled-server.onrender.com/api/transactions/summary/${wallet.id}`
+    const url = `http://localhost:8080/api/transactions/summary/${wallet.id}`
 
     const headers = {
       Authorization: `Bearer ${token}`,
@@ -111,8 +111,7 @@ export default function SummaryPage() {
 
   const getTransactionGraph = (id) => {
     const token = localStorage.getItem('token')
-    const url =
-      'https://kel-1-rakamin-walled-server.onrender.com/api/transactions/graph'
+    const url = 'http://localhost:8080/api/transactions/graph'
 
     const headers = {
       Authorization: `Bearer ${token}`,

@@ -27,7 +27,7 @@ const TransferPage = () => {
 
     try {
       axios
-        .get('https://kel-1-rakamin-walled-server.onrender.com/api/wallets', {
+        .get('http://localhost:8080/api/wallets', {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -78,8 +78,7 @@ const TransferPage = () => {
   const onTransactionRequest = () => {
     setLoading(true)
     const token = localStorage.getItem('token')
-    const url =
-      'https://kel-1-rakamin-walled-server.onrender.com/api/transactions'
+    const url = 'http://localhost:8080/api/transactions'
 
     const data = {
       walletId: wallet.id,

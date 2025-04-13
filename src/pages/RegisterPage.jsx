@@ -27,7 +27,7 @@ const RegisterPage = ({ setIsAuthenticated }) => {
       const registerUser = async () => {
         try {
           const response = await axios.post(
-            'https://kel-1-rakamin-walled-server.onrender.com/api/auth/register',
+            'http://localhost:8080/api/auth/register',
             {
               email: email,
               username: email,

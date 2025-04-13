@@ -22,7 +22,7 @@ function App() {
 
     axios
       .post(
-        'https://kel-1-rakamin-walled-server.onrender.com/api/auth/logout',
+        'http://localhost:8080/api/auth/logout',
         {},
         {
           headers: {

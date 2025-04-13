@@ -40,8 +40,7 @@ const TopUpPage = () => {
     setLoading(true)
 
     const token = localStorage.getItem('token')
-    const url =
-      'https://kel-1-rakamin-walled-server.onrender.com/api/transactions'
+    const url = 'http://localhost:8080/api/transactions'
 
     const data = {
       walletId: wallet.id,

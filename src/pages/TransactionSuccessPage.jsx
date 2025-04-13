@@ -24,7 +24,7 @@ export default function TransactionSuccessCard() {
       const fetchTransData = async () => {
         try {
           const transactionId = data.id
-          const url = `https://kel-1-rakamin-walled-server.onrender.com/api/transactions/${transactionId}`
+          const url = `http://localhost:8080/api/transactions/${transactionId}`
 
           const headers = {
             Authorization: `Bearer ${token}`,
@@ -65,7 +65,7 @@ export default function TransactionSuccessCard() {
 
   const onDownloadReceipt = () => {
     const token = localStorage.getItem('token')
-    const url = `https://kel-1-rakamin-walled-server.onrender.com/api/transactions/export-pdf/${dataTrans.id}`
+    const url = `http://localhost:8080/api/transactions/export-pdf/${dataTrans.id}`
     const headers = {
       Authorization: `Bearer ${token}`,
     }
