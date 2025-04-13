@@ -10,14 +10,33 @@ import RegisterPage from './pages/RegisterPage'
 import Navbar from './components/organisms/Navbar'
 import TransactionSuccessCard from './pages/TransactionSuccessPage'
 import SummaryPage from './pages/SummayPage'
+import axios from 'axios'
 
 function App() {
   const location = useLocation() // Get the current path
 
   const handleLogout = () => {
-    // Handle logout logic, e.g., clear localStorage or set state
-    localStorage.clear()
-    window.location.href = '/login' // Redirect to login page after logout
+    // Handle logout logic, e.g., clear localStorage or set stateimport axios from 'axios';
+
+    const token = localStorage.getItem('token')
+
+    axios
+      .post(
+        'https://kel-1-rakamin-walled-server.onrender.com/api/auth/logout',
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      )
+      .then((response) => {
+        localStorage.clear()
+        window.location.href = '/login' // Redirect to login page after logout
+      })
+      .catch((error) => {
+        console.error('error', error)
+      })
   }
 
   return (
