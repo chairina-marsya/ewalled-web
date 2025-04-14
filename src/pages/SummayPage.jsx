@@ -12,7 +12,7 @@ import { useNavigate } from 'react-router-dom'
 import { useWalletStore } from '../../store/walletStore'
 import axios from 'axios'
 import { showAlert } from '../components/organisms/ShowAlert'
-import { toRupiah } from '../utils/functions'
+import { backToLogin, toRupiah } from '../utils/functions'
 import {
   getTransactionGraph,
   getWalletSummary,
@@ -59,7 +59,8 @@ export default function SummaryPage() {
       setTotalIncome(data.totalIncome)
       setTotalOutcome(data.totalOutcome)
     } catch (error) {
-      showAlert(`Oop! ${error.message}`, 'OK', null)
+      const status = error?.response?.status
+      showAlert(`Oop! ${error.message}`, 'OK', () => backToLogin(status))
     }
   }
 
@@ -98,7 +99,8 @@ export default function SummaryPage() {
 
       setData(graphData)
     } catch (error) {
-      showAlert(`Oop! ${error.message}`, 'OK', null)
+      const status = error?.response?.status
+      showAlert(`Oop! ${error.message}`, 'OK', () => backToLogin(status))
     }
   }
 

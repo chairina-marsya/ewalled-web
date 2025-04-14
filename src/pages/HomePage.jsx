@@ -7,7 +7,7 @@ import { useUserStore } from '../../store/userStore'
 import { useWalletStore } from '../../store/walletStore'
 import moment from 'moment'
 import LinkText from '../components/atoms/LinkText'
-import { getTimeGreeting, toRupiah } from '../utils/functions'
+import { backToLogin, getTimeGreeting, toRupiah } from '../utils/functions'
 import {
   createWallet,
   fetchTransactionHistory,
@@ -72,7 +72,8 @@ const HomePage = () => {
         setPaginatedTransactions(transactions.content)
       } catch (error) {
         const msg = error.response?.data?.message || 'Something went wrong'
-        showAlert(`Oop! ${msg}`, 'OK', () => navigate('/login'))
+        const status = error?.response?.status
+        showAlert(`Oop! ${msg}`, 'OK', () => backToLogin(status))
       }
     }
 
@@ -104,7 +105,8 @@ const HomePage = () => {
         // )
       } catch (error) {
         const msg = error.response?.data?.message || 'Something went wrong'
-        showAlert(`Oop! ${msg}`, 'OK', null)
+        const status = error?.response?.status
+        showAlert(`Oop! ${msg}`, 'OK', () => backToLogin(status))
       }
     }
 

@@ -58,3 +58,12 @@ export const getDateRange = (type) => {
     endDate: endDate.toISOString(),
   }
 }
+
+export const backToLogin = (status) => {
+  if (status === 401) {
+    localStorage.clear()
+    window.location.href = '/login'
+  } else {
+    null
+  }
+}

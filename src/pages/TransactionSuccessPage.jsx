@@ -6,7 +6,7 @@ import {
   getTransactionById,
   downloadTransactionReceipt,
 } from '../services/transactionService'
-import { toRupiah } from '../utils/functions'
+import { backToLogin, toRupiah } from '../utils/functions'
 import moment from 'moment'
 
 export default function TransactionSuccessCard() {
@@ -33,7 +33,8 @@ export default function TransactionSuccessCard() {
         setDataTrans(transactionData)
       } catch (error) {
         console.error('Error fetching transaction:', error)
-        showAlert(`Oop! ${error.message}`, 'OK', null)
+        const status = error?.response?.status
+        showAlert(`Oop! ${error.message}`, 'OK', () => backToLogin(status))
       }
     }
 
@@ -60,7 +61,8 @@ export default function TransactionSuccessCard() {
       showAlert('Downloaded', 'OK', null)
     } catch (error) {
       console.error('Error downloading receipt:', error)
-      showAlert(`Oop! ${error.message}`, 'OK', null)
+      const status = error?.response?.status
+      showAlert(`Oop! ${error.message}`, 'OK', () => backToLogin(status))
     }
   }
 

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useWalletStore } from '../../store/walletStore'
 import { showAlert } from '../components/organisms/ShowAlert'
-import { toRupiah } from '../utils/functions'
+import { backToLogin, toRupiah } from '../utils/functions'
 import { fetchWallets } from '../services/walletService'
 import { createTransferTransaction } from '../services/transactionService'
 
@@ -28,8 +28,8 @@ const TransferPage = () => {
       .catch((error) => {
         const inline =
           error?.response?.data?.message || 'Failed to get wallet data.'
-        console.error('Error fetching wallets:', error)
-        showAlert(`Oops! ${inline}`, 'OK')
+        const status = error?.response?.status
+        showAlert(`Oops! ${inline}`, 'OK', () => backToLogin(status))
       })
       .finally(() => setLoading(false))
   }, [])
@@ -61,7 +61,8 @@ const TransferPage = () => {
         const inline =
           error?.response?.data?.message ||
           'Unfortunately transaction is failed.'
-        showAlert(`Oops. ${inline}`, 'OK')
+        const status = error?.response?.status
+        showAlert(`Oops. ${inline}`, 'OK', () => backToLogin(status))
       })
       .finally(() => setLoading(false))
   }

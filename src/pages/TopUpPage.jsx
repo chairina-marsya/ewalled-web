@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { useWalletStore } from '../../store/walletStore'
 import { showAlert } from '../components/organisms/ShowAlert'
 import { createTopUpTransaction } from '../services/transactionService'
+import { backToLogin } from '../utils/functions'
 
 const dummyReceivers = [
   { id: 1, name: 'BYOND Pay' },
@@ -32,7 +33,8 @@ const TopUpPage = () => {
       })
       .catch((error) => {
         const inline = error?.response?.data?.message || 'Transaksi gagal.'
-        showAlert(`Oops. ${inline}`, 'OK')
+        const status = error?.response?.status
+        showAlert(`Oops. ${inline}`, 'OK', () => backToLogin(status))
       })
       .finally(() => setLoading(false))
   }
