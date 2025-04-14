@@ -111,7 +111,7 @@ const HomePage = () => {
     }
 
     getTransactions()
-  }, [wallet, sortBy, order, time, type, page])
+  }, [wallet, sortBy, order, time, type, page, itemsPerPage])
 
   useEffect(() => {
     const lowercased = search.toLowerCase()
