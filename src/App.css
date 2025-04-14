@@ -28,24 +28,6 @@ nav {
   z-index: 1000;
 }
 
-.nav-links {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-}
-
-.nav-link {
-  padding: 5px 9px;
-  text-decoration: none;
-  color: inherit;
-}
-
-.nav-link:hover {
-  color: blue;
-  font-weight: bold;
-  cursor: pointer;
-}
-
 /* index.css or global.css */
 .swal2-title {
   font-size: 20px;

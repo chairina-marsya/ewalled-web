@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { ChevronDown, ChevronUp, Share2, Download } from 'lucide-react'
+import { Loader2 } from 'lucide-react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { showAlert } from '../components/organisms/ShowAlert'
 import {
@@ -12,6 +13,8 @@ import moment from 'moment'
 export default function TransactionSuccessCard() {
   const [expanded, setExpanded] = useState(false)
   const [dataTrans, setDataTrans] = useState({})
+  const [loading, setLoading] = useState(false)
+
   const navigate = useNavigate()
   const location = useLocation()
   const data = location.state || {}
@@ -48,6 +51,7 @@ export default function TransactionSuccessCard() {
   const onDownloadReceipt = async () => {
     const token = localStorage.getItem('token')
     try {
+      setLoading(true)
       const blob = await downloadTransactionReceipt(dataTrans.id, token)
       const url = window.URL.createObjectURL(blob)
       const link = document.createElement('a')
@@ -58,9 +62,12 @@ export default function TransactionSuccessCard() {
       link.remove() // clean up
       setTimeout(() => window.URL.revokeObjectURL(url), 100) // optional cleanup
 
+      setLoading(false)
       showAlert('Downloaded', 'OK', null)
     } catch (error) {
       console.error('Error downloading receipt:', error)
+      setLoading(false)
+
       const status = error?.response?.status
       showAlert(`Oop! ${error.message}`, 'OK', () => backToLogin(status))
     }
@@ -252,7 +259,11 @@ export default function TransactionSuccessCard() {
               className='bg-[#0061FF1A] text-white p-2 rounded-full cursor-pointer'
               onClick={() => onDownloadReceipt()}
             >
-              <Download size={20} />
+              {loading ? (
+                <Loader2 size={20} className='animate-spin' />
+              ) : (
+                <Download size={20} />
+              )}
             </button>
           </div>
           <button

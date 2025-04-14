@@ -41,26 +41,62 @@ const Navbar = ({ onLogout }) => {
 
       {/* Desktop nav links */}
       <div className='hidden lg:flex items-center gap-6'>
-        <a id='dashboard-link' href='/' className='nav-link'>
-          Dashboard
-        </a>
-        <a id='summary-link' href='/summary' className='nav-link'>
+        <a
+          id='summary-link'
+          href='/summary'
+          className={`px-[9px] py-[5px] no-underline hover:text-blue-600 hover:font-bold hover:cursor-pointer ${
+            location.pathname === '/summary'
+              ? 'font-bold text-blue-600'
+              : 'text-black-500'
+          }`}
+        >
           Summary
         </a>
-        <a id='transfer-link' href='/transfer' className='nav-link'>
-          Transfer
-        </a>
-        <a id='topup-link' href='/top-up' className='nav-link'>
+        <a
+          id='topup-link'
+          href='/top-up'
+          className={`px-[9px] py-[5px] no-underline hover:text-blue-600 hover:font-bold hover:cursor-pointer ${
+            location.pathname === '/top-up'
+              ? 'font-bold text-blue-600'
+              : 'text-black-500'
+          }`}
+        >
           Top Up
         </a>
-        <a id='signout-link' onClick={onLogout} className='nav-link'>
+        <a
+          id='dashboard-link'
+          href='/'
+          className={`px-[9px] py-[5px] no-underline hover:text-blue-600 hover:font-bold hover:cursor-pointer ${
+            location.pathname === '/'
+              ? 'font-bold text-blue-600'
+              : 'text-black-500'
+          }`}
+        >
+          Dashboard
+        </a>
+        <a
+          id='transfer-link'
+          href='/transfer'
+          className={`px-[9px] py-[5px] no-underline hover:text-blue-600 hover:font-bold hover:cursor-pointer ${
+            location.pathname === '/transfer'
+              ? 'font-bold text-blue-600'
+              : 'text-black-500'
+          }`}
+        >
+          Transfer
+        </a>
+        <a
+          id='signout-link'
+          onClick={onLogout}
+          className='px-[9px] py-[5px] no-underline hover:text-blue-600 hover:font-bold hover:cursor-pointer'
+        >
           Sign Out
         </a>
         <p>|</p>
         <div id='mode-togle' onClick={toggleTheme}>
           <img
             id='mode-logo'
-            src={isDark ? '/asset/mode.png' : '/asset/moon.png'}
+            src={isDark ? '/asset/moon.png' : '/asset/mode.png'}
             alt='Mode'
             className='h-5 cursor-pointer'
           />
@@ -72,7 +108,7 @@ const Navbar = ({ onLogout }) => {
         <div id='mode-togle' onClick={toggleTheme}>
           <img
             id='mode-logo'
-            src={isDark ? '/asset/mode.png' : '/asset/moon.png'}
+            src={isDark ? '/asset/moon.png' : '/asset/mode.png'}
             alt='Mode'
             className='h-5 cursor-pointer'
           />
@@ -89,19 +125,55 @@ const Navbar = ({ onLogout }) => {
       {/* Mobile dropdown menu */}
       {menuOpen && (
         <div className='absolute top-[8vh] left-0 w-full shadow-md px-6 py-4 flex flex-col gap-4 lg:hidden z-40 bg-white text-black dark:bg-[#272727] dark:text-white'>
-          <a id='dashboard-link' href='/' className='nav-link'>
-            Dashboard
-          </a>
-          <a id='summary-link' href='/summary' className='nav-link'>
+          <a
+            id='summary-link'
+            href='/summary'
+            className={`px-[9px] py-[5px] no-underline hover:text-blue-600 hover:font-bold hover:cursor-pointer ${
+              location.pathname === '/summary'
+                ? 'font-bold text-blue-600'
+                : 'text-black-500'
+            }`}
+          >
             Summary
           </a>
-          <a id='transfer-link' href='/transfer' className='nav-link'>
-            Transfer
-          </a>
-          <a id='topup-link' href='/top-up' className='nav-link'>
+          <a
+            id='topup-link'
+            href='/top-up'
+            className={`px-[9px] py-[5px] no-underline hover:text-blue-600 hover:font-bold hover:cursor-pointer ${
+              location.pathname === '/top-up'
+                ? 'font-bold text-blue-600'
+                : 'text-black-500'
+            }`}
+          >
             Top Up
           </a>
-          <a id='signout-link' onClick={onLogout} className='nav-link'>
+          <a
+            id='dashboard-link'
+            href='/'
+            className={`px-[9px] py-[5px] no-underline hover:text-blue-600 hover:font-bold hover:cursor-pointer ${
+              location.pathname === '/'
+                ? 'font-bold text-blue-600'
+                : 'text-black-500'
+            }`}
+          >
+            Dashboard
+          </a>
+          <a
+            id='transfer-link'
+            href='/transfer'
+            className={`px-[9px] py-[5px] no-underline hover:text-blue-600 hover:font-bold hover:cursor-pointer ${
+              location.pathname === '/transfer'
+                ? 'font-bold text-blue-600'
+                : 'text-black-500'
+            }`}
+          >
+            Transfer
+          </a>
+          <a
+            id='signout-link'
+            onClick={onLogout}
+            className='px-[9px] py-[5px] no-underline hover:text-blue-600 hover:font-bold hover:cursor-pointer'
+          >
             Sign Out
           </a>
         </div>

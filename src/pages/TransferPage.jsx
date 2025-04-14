@@ -1,8 +1,15 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { Eye, EyeOff } from 'lucide-react'
+import { Loader2 } from 'lucide-react'
 import { useWalletStore } from '../../store/walletStore'
 import { showAlert } from '../components/organisms/ShowAlert'
-import { backToLogin, toRupiah } from '../utils/functions'
+import {
+  backToLogin,
+  formatRupiahInput,
+  handleChangeOnlyDigit,
+  toRupiah,
+} from '../utils/functions'
 import { fetchWallets } from '../services/walletService'
 import { createTransferTransaction } from '../services/transactionService'
 
@@ -15,6 +22,7 @@ const TransferPage = () => {
   const [description, setDescription] = useState('')
   const [loading, setLoading] = useState(false)
   const { wallet } = useWalletStore()
+  const [showBalance, setShowBalance] = useState(false)
 
   useEffect(() => {
     setLoading(true)
@@ -126,15 +134,17 @@ const TransferPage = () => {
               <label className='text-gray-400 text-sm' id='amount-title'>
                 Amount
               </label>
-              <div className='flex items-end gap-2 mt-1'>
-                <span className='text-sm font-semibold'>IDR</span>
+              <div className='flex items-start gap-2 mt-1'>
+                <span className='text-sm'>IDR</span>
                 <input
                   id='amount'
-                  type='number'
+                  type='text'
                   placeholder='10.000'
-                  value={amount}
-                  onChange={(e) => setAmount(e.target.value)}
-                  className='w-full bg-transparent border-none text-2xl font-semibold dark:bg-[#272727] dark:text-white'
+                  value={formatRupiahInput(amount)}
+                  onChange={(e) =>
+                    setAmount(handleChangeOnlyDigit(e.target.value))
+                  }
+                  className='w-full bg-transparent border-none text-2xl dark:bg-[#272727] dark:text-white'
                 />
               </div>
               <div className='flex justify-between items-center border-t border-gray-300 pt-2 mt-2'>
@@ -176,8 +186,13 @@ const TransferPage = () => {
                   : 'bg-gray-400 cursor-not-allowed opacity-60'
               }`}
               onClick={() => onTransactionRequest()}
+              disabled={loading}
             >
-              {loading ? '...loading' : 'Transfer'}
+              {loading ? (
+                <Loader2 className='mx-auto h-5 w-5 animate-spin' />
+              ) : (
+                'Transfer'
+              )}
             </button>
           </div>
         </div>
@@ -215,25 +230,41 @@ const TransferPage = () => {
 
               {/* Amount Section */}
               <div className='bg-gray-100 p-4 rounded-xl mb-2 dark:bg-black dark:text-white'>
-                <div className='flex items-end gap-2 mt-1'>
-                  <span className='text-sm font-semibold'>IDR</span>
+                <div className='flex items-center gap-2 mt-1'>
+                  <span className='text-2xl'>IDR</span>
                   <input
                     id='amount'
-                    type='number'
+                    type='text'
                     placeholder='10.000'
-                    value={amount}
-                    onChange={(e) => setAmount(e.target.value)}
-                    className='w-full bg-transparent border-none text-2xl font-semibold dark:bg-[#272727] dark:text-white'
+                    value={formatRupiahInput(amount)}
+                    onChange={(e) =>
+                      setAmount(handleChangeOnlyDigit(e.target.value))
+                    }
+                    className='w-full bg-transparent border-none text-2xl dark:bg-[#272727] dark:text-white'
                   />
                 </div>
                 <hr className='border-black mt-2' />
               </div>
-              <p className='text-sm text-gray-500 mb-4' id='balance-title'>
-                Balance:{' '}
-                <span className='text-teal-600 font-medium' id='balance'>
-                  {toRupiah(accountData?.[0]?.balance ?? 0)}
-                </span>
-              </p>
+              <div className='flex justify-between items-center mb-3'>
+                <p className='text-sm text-gray-500' id='balance-title'>
+                  Balance :{' '}
+                  <span className='text-sm text-teal-600' id='balance'>
+                    {showBalance
+                      ? toRupiah(accountData?.[0]?.balance ?? 0)
+                      : 'Rp **********'}
+                  </span>
+                </p>
+                <button
+                  onClick={() => setShowBalance((prev) => !prev)}
+                  className='text-gray-500 hover:text-gray-700'
+                >
+                  {showBalance ? (
+                    <Eye className='w-5 h-5' />
+                  ) : (
+                    <EyeOff className='w-5 h-5' />
+                  )}
+                </button>
+              </div>
 
               {/* Notes Input */}
               <div className='bg-gray-100 p-3 rounded-xl mb-6 dark:bg-black dark:text-white'>
@@ -261,8 +292,13 @@ const TransferPage = () => {
                     : 'bg-gray-400 cursor-not-allowed opacity-60'
                 }`}
                 onClick={() => onTransactionRequest()}
+                disabled={loading}
               >
-                {loading ? '...loading' : 'Transfer'}
+                {loading ? (
+                  <Loader2 className='mx-auto h-5 w-5 animate-spin' />
+                ) : (
+                  'Transfer'
+                )}
               </button>
             </div>
           </div>

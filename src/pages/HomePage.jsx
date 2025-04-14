@@ -191,7 +191,7 @@ const HomePage = () => {
               </p>
               <div className='flex items-center gap-1'>
                 <p className='text-xl font-bold w-40' id='balance'>
-                  {isVisible ? toRupiah(wallet?.balance || 0) : 'Rp •••••'}
+                  {isVisible ? toRupiah(wallet?.balance || 0) : 'Rp **********'}
                 </p>
                 <img
                   id='visibility'
@@ -205,7 +205,7 @@ const HomePage = () => {
             </div>
 
             <div className='right-4 flex flex-col gap-2'>
-              <div className='cursor-pointer bg-[#0061FF] shadow-[0px_0px_10px_0px_#19918F] p-2 rounded-md inline-flex items-center justify-center w-10 h-10'>
+              <div className='cursor-pointer bg-[#0061FF] shadow-[0px_0px_10px_0px_#19918F] p-2 rounded-md inline-flex items-center justify-center w-9 h-9'>
                 <img
                   id='topup-logo'
                   height='20'
@@ -215,7 +215,7 @@ const HomePage = () => {
                   onClick={() => navigate('/top-up')}
                 />
               </div>
-              <div className='cursor-pointer bg-[#0061FF] shadow-[0px_0px_10px_0px_#19918F] p-2 rounded-md inline-flex items-center justify-center w-10 h-10'>
+              <div className='cursor-pointer bg-[#0061FF] shadow-[0px_0px_10px_0px_#19918F] p-2 rounded-md inline-flex items-center justify-center w-9 h-9'>
                 <img
                   id='transfer-logo'
                   height='20'
@@ -289,7 +289,7 @@ const HomePage = () => {
                 id='pagination-first'
                 onClick={() => setPage(1)}
                 disabled={page === 1}
-                className={`px-2 py-1 font-bold h-[42px] rounded-md transition-colors ${
+                className={`px-2 py-1 font-bold h-[38px] rounded-bl-[6.73px] rounded-tl-[6.73px] border border-[#BDBDBD] transition-colors ${
                   page === 1
                     ? 'text-gray-400 cursor-not-allowed'
                     : 'text-blue-600 hover:bg-gray-200'
@@ -301,7 +301,7 @@ const HomePage = () => {
                 id='pagination-page'
                 onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
                 disabled={page === 1}
-                className={`px-2 py-1 font-bold h-[42px] rounded-md transition-colors ${
+                className={`px-3 py-1 font-bold h-[38px] border border-[#BDBDBD] transition-colors ${
                   page === 1
                     ? 'text-gray-400 cursor-not-allowed'
                     : 'text-blue-600 hover:bg-gray-200'
@@ -314,7 +314,7 @@ const HomePage = () => {
                   id={`pagination-${i}`}
                   key={i}
                   onClick={() => setPage(i + 1)}
-                  className={`px-2 py-1 font-bold h-[42px] rounded-md transition-colors ${
+                  className={`px-3 py-1 font-bold h-[38px] border border-[#BDBDBD] transition-colors ${
                     page === i + 1
                       ? 'bg-blue-600 text-white'
                       : 'text-blue-600 hover:bg-gray-200'
@@ -329,7 +329,7 @@ const HomePage = () => {
                   setPage((prev) => Math.min(prev + 1, totalPages))
                 }
                 disabled={page === totalPages}
-                className={`px-2 py-1 font-bold h-[42px] rounded-md transition-colors ${
+                className={`px-3 py-1 font-bold h-[38px] border border-[#BDBDBD] transition-colors ${
                   page === totalPages
                     ? 'text-gray-400 cursor-not-allowed'
                     : 'text-blue-600 hover:bg-gray-200'
@@ -341,7 +341,7 @@ const HomePage = () => {
                 id='pagination-next'
                 onClick={() => setPage(totalPages)}
                 disabled={page === totalPages}
-                className={`px-2 py-1 font-bold h-[42px] rounded-md transition-colors ${
+                className={`px-2 py-1 font-bold h-[38px] rounded-br-[6.73px] rounded-tr-[6.73px] border border-[#BDBDBD] transition-colors ${
                   page === totalPages
                     ? 'text-gray-400 cursor-not-allowed'
                     : 'text-blue-600 hover:bg-gray-200'
@@ -387,7 +387,7 @@ const HomePage = () => {
             </div>
           </div>
 
-          <div className='flex justify-between flex-col lg:flex-row gap-4'>
+          <div className='flex justify-between flex-col lg:flex-row gap-11'>
             <div className='bg-blue-600 text-white p-4 lg:p-8 rounded-xl w-full lg:w-1/4'>
               <p className='text-sm' id='account-number-title'>
                 Account No.
@@ -397,17 +397,21 @@ const HomePage = () => {
               </p>
             </div>
             <div className='bg-white w-3/4 p-8 rounded-xl bg-[#f9f9f9] text-black dark:bg-[#272727] dark:text-white'>
-              <p className='text-sm' id='balance-title'>
-                Balance
-              </p>
               <div className='flex justify-between items-center'>
                 <div className='flex gap-2.5'>
-                  <p className='text-2xl font-bold w-60' id='balance'>
-                    {isVisible ? toRupiah(wallet?.balance || 0) : 'Rp •••••'}
-                  </p>
+                  <div>
+                    <p className='text-sm' id='balance-title'>
+                      Balance
+                    </p>
+                    <p className='text-2xl font-bold w-60' id='balance'>
+                      {isVisible
+                        ? toRupiah(wallet?.balance || 0)
+                        : 'Rp **********'}
+                    </p>
+                  </div>
                   <img
                     id='visibility'
-                    height='15'
+                    width={30}
                     src={
                       isVisible ? '/asset/visibility.svg' : '/asset/hide.svg'
                     }
@@ -417,7 +421,7 @@ const HomePage = () => {
                   />
                 </div>
                 <div className='flex gap-5'>
-                  <div className='cursor-pointer bg-[#0061FF] shadow-[0px_0px_10px_0px_#19918F] p-2 rounded-md inline-flex items-center justify-center w-10 h-10'>
+                  <div className='cursor-pointer bg-[#0061FF] shadow-[0px_0px_10px_0px_#19918F] p-2 rounded-md inline-flex items-center justify-center w-9 h-9'>
                     <img
                       id='topup-logo'
                       height='20'
@@ -427,7 +431,7 @@ const HomePage = () => {
                       onClick={() => navigate('/top-up')}
                     />
                   </div>
-                  <div className='cursor-pointer bg-[#0061FF] shadow-[0px_0px_10px_0px_#19918F] p-2 rounded-md inline-flex items-center justify-center w-10 h-10'>
+                  <div className='cursor-pointer bg-[#0061FF] shadow-[0px_0px_10px_0px_#19918F] p-2 rounded-md inline-flex items-center justify-center w-9 h-9'>
                     <img
                       id='transfer-logo'
                       height='20'
@@ -685,13 +689,13 @@ const HomePage = () => {
 
             <div
               id='pagination'
-              className='flex items-center mt-4 w-fit rounded-md'
+              className='flex items-center mt-4 w-fit rounded-md bg-[#FFFFFF] border border-[#BDBDBD] rounded-[6.73px]s'
             >
               <button
                 id='pagination-first'
                 onClick={() => setPage(1)}
                 disabled={page === 1}
-                className={`px-3 py-2 font-bold h-[42px] rounded-md transition-colors ${
+                className={`px-3 py-2 font-bold h-[38px] rounded-bl-[6.73px] rounded-tl-[6.73px] border border-[#BDBDBD] transition-colors ${
                   page === 1
                     ? 'text-gray-400 cursor-not-allowed'
                     : 'text-blue-600 hover:bg-gray-200'
@@ -703,7 +707,7 @@ const HomePage = () => {
                 id='pagination-page'
                 onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
                 disabled={page === 1}
-                className={`px-3 py-2 font-bold h-[42px] rounded-md transition-colors ${
+                className={`px-3 py-2 font-bold h-[38px] border border-[#BDBDBD] transition-colors ${
                   page === 1
                     ? 'text-gray-400 cursor-not-allowed'
                     : 'text-blue-600 hover:bg-gray-200'
@@ -716,7 +720,7 @@ const HomePage = () => {
                   id={`pagination-${i}`}
                   key={i}
                   onClick={() => setPage(i + 1)}
-                  className={`px-3 py-2 font-bold h-[42px] rounded-md transition-colors ${
+                  className={`px-3 py-2 font-bold h-[38px] border border-[#BDBDBD] transition-colors ${
                     page === i + 1
                       ? 'bg-blue-600 text-white'
                       : 'text-blue-600 hover:bg-gray-200'
@@ -731,7 +735,7 @@ const HomePage = () => {
                   setPage((prev) => Math.min(prev + 1, totalPages))
                 }
                 disabled={page === totalPages}
-                className={`px-3 py-2 font-bold h-[42px] rounded-md transition-colors ${
+                className={`px-3 py-2 font-bold h-[38px] border border-[#BDBDBD] transition-colors ${
                   page === totalPages
                     ? 'text-gray-400 cursor-not-allowed'
                     : 'text-blue-600 hover:bg-gray-200'
@@ -743,7 +747,7 @@ const HomePage = () => {
                 id='pagination-next'
                 onClick={() => setPage(totalPages)}
                 disabled={page === totalPages}
-                className={`px-3 py-2 font-bold h-[42px] rounded-md transition-colors ${
+                className={`px-3 py-2 font-bold h-[38px] rounded-br-[6.73px] rounded-tr-[6.73px] border border-[#BDBDBD] transition-colors ${
                   page === totalPages
                     ? 'text-gray-400 cursor-not-allowed'
                     : 'text-blue-600 hover:bg-gray-200'

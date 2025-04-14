@@ -1,9 +1,14 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { Loader2 } from 'lucide-react'
 import { useWalletStore } from '../../store/walletStore'
 import { showAlert } from '../components/organisms/ShowAlert'
 import { createTopUpTransaction } from '../services/transactionService'
-import { backToLogin } from '../utils/functions'
+import {
+  backToLogin,
+  formatRupiahInput,
+  handleChangeOnlyDigit,
+} from '../utils/functions'
 
 const dummyReceivers = [
   { id: 1, name: 'BYOND Pay' },
@@ -52,17 +57,19 @@ const TopUpPage = () => {
 
             {/* Amount */}
             <div className='rounded-md p-4 mb-4 bg-white dark:bg-[#272727] dark:text-white'>
-              <label className='text-gray-400 text-sm' id='amount-title'>
+              <label className='text-black-400 text-sm' id='amount-title'>
                 Amount
               </label>
-              <div className='flex items-end gap-2 mt-1'>
-                <span className='text-sm font-semibold'>IDR</span>
+              <div className='flex items-center gap-2 mt-1'>
+                <span className='text-2xl '>IDR</span>
                 <input
                   id='amount'
-                  type='number'
+                  type='text'
                   placeholder='10.000'
-                  value={amount}
-                  onChange={(e) => setAmount(e.target.value)}
+                  value={formatRupiahInput(amount)}
+                  onChange={(e) =>
+                    setAmount(handleChangeOnlyDigit(e.target.value))
+                  }
                   className='w-full bg-transparent border-none text-2xl font-semibold dark:bg-[#272727] dark:text-white'
                 />
               </div>
@@ -130,7 +137,11 @@ const TopUpPage = () => {
               onClick={() => onTransactionRequest()}
               disabled={loading}
             >
-              {loading ? '...loading' : 'Top Up'}
+              {loading ? (
+                <Loader2 className='mx-auto h-5 w-5 animate-spin' />
+              ) : (
+                'Top Up'
+              )}
             </button>
           </div>
         </div>
@@ -146,19 +157,21 @@ const TopUpPage = () => {
               {/* Amount Section */}
               <div className='bg-gray-100 p-4 rounded-xl mb-2 dark:bg-black dark:text-white'>
                 <p
-                  className='text-sm font-semibold text-gray-700 dark:text-white'
+                  className='text-sm text-black-700 dark:text-white'
                   id='amount-title'
                 >
                   Amount
                 </p>
-                <div className='flex item-center gap-3'>
-                  <p className='text-sm font-semibold'>IDR</p>
+                <div className='flex items-center gap-3'>
+                  <p className='text-2xl'>IDR</p>
                   <input
                     id='amount'
-                    type='number'
+                    type='text'
                     placeholder='10.000'
-                    // value={amount}
-                    onChange={(e) => setAmount(e.target.value)}
+                    value={formatRupiahInput(amount)}
+                    onChange={(e) =>
+                      setAmount(handleChangeOnlyDigit(e.target.value))
+                    }
                     className='w-full bg-transparent border-none text-2xl font-semibold dark:bg-[#272727] dark:text-white'
                   />
                 </div>
@@ -166,9 +179,9 @@ const TopUpPage = () => {
               </div>
 
               {/* Dropdown Select */}
-              <div className='flex items-center justify-between bg-gray-100 rounded-[10px] shadow-sm mb-4 dark:bg-black dark:text-white'>
+              <div className='flex items-center justify-between bg-gray-100 rounded-xl shadow-sm mb-4 dark:bg-black dark:text-white'>
                 <span
-                  className='bg-gray-300 px-4 py-3 rounded-[20px] font-bold text-sm dark:text-white'
+                  className='bg-gray-300 px-4 py-3 rounded-xl font-bold text-sm dark:text-white'
                   id='from-title'
                 >
                   From
@@ -216,7 +229,11 @@ const TopUpPage = () => {
                 onClick={() => onTransactionRequest()}
                 disabled={loading}
               >
-                {!loading ? 'Top Up' : '...loading'}
+                {loading ? (
+                  <Loader2 className='mx-auto h-5 w-5 animate-spin' />
+                ) : (
+                  'Top Up'
+                )}
               </button>
             </div>
           </div>

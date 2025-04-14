@@ -16,8 +16,24 @@ export const toRupiah = (number) => {
   return new Intl.NumberFormat('id-ID', {
     style: 'currency',
     currency: 'IDR',
-    minimumFractionDigits: 0,
+    minimumFractionDigits: 2,
   }).format(number)
+}
+
+export const formatRupiahInput = (value) => {
+  if (!value) return ''
+
+  // Remove non-digit characters
+  const numeric = value.replace(/\D/g, '')
+
+  // Format with dots every 3 digits from the end
+  return numeric.replace(/\B(?=(\d{3})+(?!\d))/g, '.')
+}
+
+export const handleChangeOnlyDigit = (value) => {
+  // Only keep digits
+  const raw = value.replace(/\D/g, '')
+  return raw
 }
 
 export const getDateRange = (type) => {
