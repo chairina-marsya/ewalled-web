@@ -9,6 +9,7 @@ import {
 } from '../services/transactionService'
 import { backToLogin, toRupiah } from '../utils/functions'
 import moment from 'moment'
+import { showAlertTimer } from '../components/organisms/ShowAlertTimer'
 
 export default function TransactionSuccessCard() {
   const [expanded, setExpanded] = useState(false)
@@ -63,7 +64,8 @@ export default function TransactionSuccessCard() {
       setTimeout(() => window.URL.revokeObjectURL(url), 100) // optional cleanup
 
       setLoading(false)
-      showAlert('Downloaded', 'OK', null)
+      showAlertTimer()
+      // showAlert('Downloaded', 'OK', null)
     } catch (error) {
       console.error('Error downloading receipt:', error)
       setLoading(false)

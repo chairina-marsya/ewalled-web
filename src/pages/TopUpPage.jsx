@@ -61,7 +61,7 @@ const TopUpPage = () => {
                 Amount
               </label>
               <div className='flex items-center gap-2 mt-1'>
-                <span className='text-2xl '>IDR</span>
+                <span className='text-2xl '>Rp</span>
                 <input
                   id='amount'
                   type='text'
@@ -163,7 +163,7 @@ const TopUpPage = () => {
                   Amount
                 </p>
                 <div className='flex items-center gap-3'>
-                  <p className='text-2xl'>IDR</p>
+                  <p className='text-2xl'>Rp</p>
                   <input
                     id='amount'
                     type='text'

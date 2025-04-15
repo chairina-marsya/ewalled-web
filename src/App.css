@@ -32,15 +32,18 @@ nav {
 .swal2-title {
   font-size: 20px;
   font-family: "Open Sans", sans-serif;
+  font-weight: 400;
 }
 
 .swal2-html-container {
   font-family: "Open Sans", sans-serif;
+  font-weight: 400;
 }
 
 .swal-popup {
   font-size: 14px;
   font-family: "Open Sans", sans-serif;
+  font-weight: 400;
 }
 
 .swal2-confirm {
@@ -50,6 +53,7 @@ nav {
   font-size: 16px;
   border-radius: 20px;
   font-family: "Open Sans", sans-serif;
+  font-weight: 400;
 }
 
 .swal-confirm-btn {
@@ -59,6 +63,7 @@ nav {
   border-radius: 6px;
   font-size: 12px;
   font-family: "Open Sans", sans-serif;
+  font-weight: 400;
 }
 
 @layer base {

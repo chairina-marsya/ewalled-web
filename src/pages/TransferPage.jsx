@@ -135,7 +135,7 @@ const TransferPage = () => {
                 Amount
               </label>
               <div className='flex items-start gap-2 mt-1'>
-                <span className='text-sm'>IDR</span>
+                <span className='text-sm'>Rp</span>
                 <input
                   id='amount'
                   type='text'
@@ -147,16 +147,31 @@ const TransferPage = () => {
                   className='w-full bg-transparent border-none text-2xl dark:bg-[#272727] dark:text-white'
                 />
               </div>
+
               <div className='flex justify-between items-center border-t border-gray-300 pt-2 mt-2'>
-                <span className='text-xs text-gray-400' id='balance-title'>
-                  Balance
-                </span>
-                <span
-                  className='text-xs text-blue-600 font-semibold'
-                  id='balance'
-                >
-                  {toRupiah(accountData?.[0]?.balance ?? 0)}
-                </span>
+                <p className='text-sm text-gray-400' id='balance-title'>
+                  Balance :{' '}
+                </p>
+                <div className='flex items-center gap-2'>
+                  <p
+                    className='text-sm text-blue-600 font-semibold'
+                    id='balance'
+                  >
+                    {showBalance
+                      ? toRupiah(accountData?.[0]?.balance ?? 0)
+                      : 'Rp **********'}
+                  </p>
+                  <button
+                    onClick={() => setShowBalance((prev) => !prev)}
+                    className='text-gray-500 hover:text-gray-700'
+                  >
+                    {showBalance ? (
+                      <Eye className='w-5 h-5' />
+                    ) : (
+                      <EyeOff className='w-5 h-5' />
+                    )}
+                  </button>
+                </div>
               </div>
             </div>
 
@@ -231,7 +246,7 @@ const TransferPage = () => {
               {/* Amount Section */}
               <div className='bg-gray-100 p-4 rounded-xl mb-2 dark:bg-black dark:text-white'>
                 <div className='flex items-center gap-2 mt-1'>
-                  <span className='text-2xl'>IDR</span>
+                  <span className='text-2xl'>Rp</span>
                   <input
                     id='amount'
                     type='text'
